@@ -4,6 +4,7 @@
 #include <wiiuse/wpad.h>
 #include <wiiuse/wiiuse.h>
 
+#include "hexasweeper/TileHexSprite.h"
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
 #include "TTFont.h"
@@ -52,7 +53,6 @@ void play_game()
 
     // Initialize remote pointer to the screen.
     WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
-    // ImageSprite cursorImage{Vector2{}, Player1_png, ACTUAL_WHITE};
     TTFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
 
     // ImageSprite sampleImg{Player1_png};

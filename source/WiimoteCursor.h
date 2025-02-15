@@ -5,7 +5,7 @@ class WiimoteCursor : public Graphics::ImageSprite
 public:
     WiimoteCursor(int wiimoteIndex);
 
-    virtual Graphics::Vector2 GetPosition() override;
+    virtual Vector2 GetPosition() override;
 
     virtual void Render() override;
 private:
@@ -14,5 +14,5 @@ private:
     static constexpr uint32_t SPRITE_COLOR = 0xFFFFFFFF;
 
     int m_wiimoteIndex;
-    Graphics::Vector2 m_lastValidPosition{0, 0};
+    Vector2 m_lastValidPosition{0, 0};
 };

@@ -1,28 +1,10 @@
 #ifndef GRAPHICS_UTILS_H
 #define GRAPHICS_UTILS_H
 
+#include "common/Vector2.h"
+
 namespace Graphics
 {
-    struct Vector2
-    {
-        Vector2() = default;
-        explicit Vector2(float x) : x{x} {}
-        Vector2(float x, float y) : x{x}, y{y} {};
-
-        float x{};
-        float y{};
-    };
-
-    struct Vector2Int
-    {
-        Vector2Int() = default;
-        explicit Vector2Int(int x) : x{x} {}
-        Vector2Int(int x, int y) : x{x}, y{y} {}
-
-        int x{};
-        int y{};
-    };
-
     class RectangleBounds
     {
     public:
