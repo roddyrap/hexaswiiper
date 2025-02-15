@@ -1,0 +1,9 @@
+# Wii executable files.
+*.elf
+*.dol
+
+# Editor data
+.vscode/
+
+# Generated compilation files.
+build/
