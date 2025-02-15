@@ -5,7 +5,7 @@
 
 using namespace Graphics;
 
-WiimoteCursor::WiimoteCursor(int wiimoteIndex) : RectSprite{Vector2{}, Vector2{32, 32}, RGBA(255, 255, 255, 255), true}, m_wiimoteIndex{wiimoteIndex}
+WiimoteCursor::WiimoteCursor(int wiimoteIndex) : ImageSprite{Vector2{}, GetImageByChannel(wiimoteIndex), RGBA(255, 255, 255, 255)}, m_wiimoteIndex{wiimoteIndex}
 {}
 
 Vector2 WiimoteCursor::GetPosition()
@@ -25,4 +25,20 @@ const uint8_t* WiimoteCursor:: GetImageByChannel(int channel)
         default:
             return nullptr;
     }
+}
+
+void WiimoteCursor::Render()
+{
+    if (this->GetTexture() == nullptr)
+    {
+        return;
+    }
+
+    // Get wiimote information.
+    orient_t orientation{};
+    WPAD_Orientation(m_wiimoteIndex, &orientation);
+
+    // Get from function to allow overloading position.
+    Vector2 position = GetPosition();
+    GRRLIB_DrawImg(position.x, position.y, this->GetTexture(), orientation.roll, 1, 1, m_color);
 }

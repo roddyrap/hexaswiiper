@@ -19,6 +19,9 @@ namespace Graphics
         virtual void Render() override;
         virtual Vector2 GetPosition() override;
 
+    protected:
+        virtual GRRLIB_texImg* GetTexture();
+
     private:
         GRRLIB_texImg* m_texture{nullptr};
     };

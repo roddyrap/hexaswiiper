@@ -1,12 +1,13 @@
 #include "sprites/ImageSprite.h"
 
-class WiimoteCursor : public Graphics::RectSprite
+class WiimoteCursor : public Graphics::ImageSprite
 {
 public:
     WiimoteCursor(int wiimoteIndex);
 
     virtual Graphics::Vector2 GetPosition() override;
 
+    virtual void Render() override;
 private:
     static const uint8_t* GetImageByChannel(int channel);
 

@@ -42,4 +42,9 @@ namespace Graphics
     {
         return m_position;
     }
+
+    GRRLIB_texImg* ImageSprite::GetTexture()
+    {
+        return m_texture;
+    }
 }
