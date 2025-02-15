@@ -82,6 +82,18 @@ const Hexasweeper::Logic::TileState& Hexasweeper::Logic::Board::GetTileState(Vec
     return m_tiles.at(coordinates);
 }
 
+const u8 Hexasweeper::Logic::Board::NearbyFlags(Vector2Int coordinates)
+{
+    u8 nearby_flags = 0;
+    for (auto& tile : GetNeighbores(coordinates))
+    {
+        nearby_flags += m_tiles[tile].is_flagged;
+    }
+
+    return nearby_flags;
+}
+
+
 void Hexasweeper::Logic::Board::InitializeBombs(Vector2Int protected_center)
 {
     m_initialized_bombs = true;

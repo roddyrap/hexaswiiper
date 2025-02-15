@@ -18,7 +18,28 @@ void Hexasweeper::Game::RevealTile(Vector2 screen_point)
     Vector2Int coordinates = m_tilemap.PointToCoordinates(screen_point);
     if (!m_board.IsCoordinateInBoard(coordinates)) return;
 
-    std::vector<Vector2Int> changed_tiles = m_board.RevealTile(coordinates);
+    const Hexasweeper::Logic::TileState tile_state = m_board.GetTileState(coordinates);
+    std::vector<Vector2Int> changed_tiles{};
+
+    // Mimic left click - regular click that reveals hidden tiles.
+    if (!tile_state.is_revealed)
+    {
+        changed_tiles = m_board.RevealTile(coordinates);
+    }
+    // If the number of flags nearby is equal to the number of bombs nearby, reveal all nearby tiles.
+    else if (!tile_state.is_flagged && tile_state.bombs_nearby > 0 && tile_state.bombs_nearby == m_board.NearbyFlags(coordinates))
+    {
+        for (const auto& tile : m_board.GetNeighbores(coordinates))
+        {
+            std::vector<Vector2Int> current_changed = m_board.RevealTile(tile);
+            changed_tiles.insert(
+                changed_tiles.end(),
+                std::make_move_iterator(current_changed.begin()),
+                std::make_move_iterator(current_changed.end())
+            );
+        }
+    }
+
     for (auto& tile_coordinates : changed_tiles)
     {
         m_tilemap.SetTile(tile_coordinates, CreateTileSprite(tile_coordinates));

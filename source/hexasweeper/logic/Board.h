@@ -34,11 +34,12 @@ namespace Hexasweeper::Logic
         std::optional<bool> IsGameOver();
 
         const TileState& GetTileState(Vector2Int coordinates) const;
+        const u8 NearbyFlags(Vector2Int coordinates);
 
+        std::vector<Vector2Int> GetNeighbores(Vector2Int originTile);
     private:
         void InitializeBombs(Vector2Int protected_center);
 
-        std::vector<Vector2Int> GetNeighbores(Vector2Int originTile);
 
     private:
         std::unordered_map<Vector2Int, TileState> m_tiles;
