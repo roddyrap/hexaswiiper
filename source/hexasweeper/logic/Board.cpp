@@ -6,7 +6,7 @@ Hexasweeper::Logic::Board::Board(u32 num_rows, u32 num_columns, u32 num_bombs) :
     {
         for (u32 column_index = 0; column_index < num_columns; ++column_index)
         {
-            Vector2Int tile_coordinates{column_index, row_index};
+            Vector2Int tile_coordinates{static_cast<int>(column_index), static_cast<int>(row_index)};
             m_tiles.emplace(std::pair<Vector2Int, TileState>{tile_coordinates, TileState{}});
         }
     }

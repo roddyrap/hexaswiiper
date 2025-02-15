@@ -91,7 +91,7 @@ void play_game()
         if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1;
         if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1;
 
-        hexasweeper_game.GetTilemap().Move(Vector2{movement.x, movement.y} * 5);
+        hexasweeper_game.GetTilemap().Move(Vector2{static_cast<f32>(movement.x), static_cast<f32>(movement.y)} * 5);
 
         hexasweeper_game.GetTilemap().Render();
 

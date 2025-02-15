@@ -25,7 +25,7 @@ INCLUDES	:=	source/ source/graphics/
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -Wall $(MACHDEP) $(INCLUDE)
+CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE)
 CXXFLAGS	=	$(CFLAGS) -std=c++20
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map

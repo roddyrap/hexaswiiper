@@ -6,7 +6,7 @@ namespace Graphics
     {}
 
     TextSprite::TextSprite(Vector2 position, std::shared_ptr<GRRLIB_ttfFont> font, std::string text, u32 font_size, uint32_t color) :
-        RectSprite{position, Vector2{}, color, false}, m_text{text}, m_font_size{font_size}, m_font{font}
+        RectSprite{position, Vector2{}, color, false}, m_font{font}, m_text{text}, m_font_size{font_size}
     {
         this->UpdateTextSize();
     }

@@ -43,7 +43,7 @@ namespace Graphics
 
     RectangleBounds ImageSprite::GetBounds()
     {
-        return RectangleBounds{GetPosition(), Vector2{m_texture->w, m_texture->h} * m_scale};
+        return RectangleBounds{GetPosition(), Vector2{static_cast<f32>(m_texture->w), static_cast<f32>(m_texture->h)} * m_scale};
     }
 
     GRRLIB_texImg* ImageSprite::GetTexture()

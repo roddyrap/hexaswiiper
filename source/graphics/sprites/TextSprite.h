@@ -27,9 +27,9 @@ namespace Graphics
 
     private:
         std::shared_ptr<GRRLIB_ttfFont> m_font;
-        std::string m_text{};
+        std::string m_text;
 
-        u32 m_font_size{10};
+        u32 m_font_size;
     };
 }
 

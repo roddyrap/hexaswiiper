@@ -2,13 +2,13 @@
 
 #include "graphics/TileFactory.h"
 
-Hexasweeper::Game::Game(std::shared_ptr<GRRLIB_ttfFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_font{font}, m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}
+Hexasweeper::Game::Game(std::shared_ptr<GRRLIB_ttfFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}, m_font{font}
 {
     for (u32 row_index = 0; row_index < num_rows; ++row_index)
     {
         for (u32 column_index = 0; column_index < num_columns; ++column_index)
         {
-            m_tilemap.CreateTile({column_index, row_index});
+            m_tilemap.CreateTile({static_cast<int>(column_index), static_cast<int>(row_index)});
         }
     }
 }
