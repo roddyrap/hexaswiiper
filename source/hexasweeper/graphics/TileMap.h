@@ -2,7 +2,7 @@
 #define HEXASWEEPER_TILEMAP_H
 
 #include "common/Vector2.h"
-#include "hexasweeper/TileSprite.h"
+#include "TileSprite.h"
 
 #include <tgmath.h>
 #include <unordered_map>

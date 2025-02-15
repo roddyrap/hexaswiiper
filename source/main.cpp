@@ -4,7 +4,7 @@
 #include <wiiuse/wpad.h>
 #include <wiiuse/wiiuse.h>
 
-#include "hexasweeper/TileMap.h"
+#include "hexasweeper/Game.h"
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
 #include "TTFont.h"
@@ -56,12 +56,7 @@ void play_game()
     TTFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
 
     // ImageSprite sampleImg{Player1_png};
-    Hexasweeper::Graphics::Tilemap tilemap{{256, 256}};
-    tilemap.CreateTile({0, 2});
-    tilemap.CreateTile({0, 1});
-    tilemap.CreateTile({0, 0});
-    tilemap.CreateTile({1, 0});
-    tilemap.CreateTile({2, 0});
+    Hexasweeper::Game hexasweeper_game{Vector2{256, 256}, 10, 10, 10};
 
     // Loop forever (gameloop).
     while(true)
@@ -77,7 +72,7 @@ void play_game()
             break;
         }
 
-        tilemap.Render();
+        hexasweeper_game.GetTilemap().Render();
 
         // WiiMote cursor should be rendered last so that it would not be covered by other objects.
         wiimoteCursor.Render();

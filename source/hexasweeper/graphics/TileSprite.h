@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "hexasweeper/TileHexSprite.h"
+#include "TileHexSprite.h"
 
 namespace Hexasweeper::Graphics
 {
