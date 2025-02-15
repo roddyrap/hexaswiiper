@@ -17,7 +17,10 @@ namespace Graphics
         virtual void Render() override;
         virtual Vector2 GetPosition() override;
 
-        RectangleBounds GetBounds();
+        virtual RectangleBounds GetBounds();
+
+        virtual void SetPosition(Vector2 position);
+        void SetCenter(Vector2 position);
 
     protected:
         Vector2 m_position;

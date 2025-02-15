@@ -13,17 +13,19 @@ namespace Graphics
     {
     public:
         ImageSprite(const uint8_t* imageData);
-        ImageSprite(Vector2 position, const uint8_t* imageData, uint32_t color);
+        ImageSprite(const uint8_t* imageData, Vector2 scale);
+        ImageSprite(Vector2 position, const uint8_t* imageData, Vector2 scale, u32 color);
         ~ImageSprite();
 
         virtual void Render() override;
-        virtual Vector2 GetPosition() override;
+        virtual RectangleBounds GetBounds() override;
 
     protected:
         virtual GRRLIB_texImg* GetTexture();
 
     private:
         GRRLIB_texImg* m_texture{nullptr};
+        Vector2 m_scale;
     };
 }
 

@@ -3,7 +3,7 @@
 #include <grrlib.h>
 #include "Data.h"
 
-WiimoteCursor::WiimoteCursor(int wiimoteIndex) : ImageSprite{Vector2{}, GetImageByChannel(wiimoteIndex), RGBA(255, 255, 255, 255)}, m_wiimoteIndex{wiimoteIndex}
+WiimoteCursor::WiimoteCursor(int wiimoteIndex) : ImageSprite{Vector2{}, GetImageByChannel(wiimoteIndex), Vector2{1, 1}, RGBA(255, 255, 255, 255)}, m_wiimoteIndex{wiimoteIndex}
 {}
 
 Vector2 WiimoteCursor::GetPosition()

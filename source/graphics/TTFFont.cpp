@@ -1,13 +1,13 @@
-#include "TTFont.h"
+#include "TTFFont.h"
 #include <stdio.h>
 
 #include "Roboto-Regular_ttf.h"
 
 namespace Graphics
 {
-    void TTFont::DebugPrintf(Vector2Int position, const char* fmt, ...)
+    void TTFFont::DebugPrintf(Vector2Int position, const char* fmt, ...)
     {
-        TTFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
+        TTFFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
 
         va_list printf_args;
         va_start(printf_args, fmt);
@@ -15,18 +15,18 @@ namespace Graphics
         va_end(printf_args);
     }
 
-    TTFont::TTFont(const uint8_t *fontData, size_t fontDataSize, int fontSize)
+    TTFFont::TTFFont(const uint8_t *fontData, size_t fontDataSize, int fontSize)
     {
         m_font = GRRLIB_LoadTTF(fontData, fontDataSize);
         m_fontSize = fontSize;
     }
 
-    TTFont::~TTFont()
+    TTFFont::~TTFFont()
     {
         GRRLIB_FreeTTF(m_font);
     }
 
-    int TTFont::Printf(Vector2Int position, const char* fmt, ...)
+    int TTFFont::Printf(Vector2Int position, const char* fmt, ...)
     {
         va_list printf_args;
         va_start(printf_args, fmt);
@@ -36,7 +36,7 @@ namespace Graphics
         return printfResult;
     }
 
-    int TTFont::Printf(Vector2Int position, const char* fmt, va_list args)
+    int TTFFont::Printf(Vector2Int position, const char* fmt, va_list args)
     {
         char* printfBuffer = nullptr;
         int printfResult = vasprintf(&printfBuffer, fmt, args);
@@ -48,5 +48,10 @@ namespace Graphics
         }
 
         return printfResult;
+    }
+
+    GRRLIB_ttfFont *TTFFont::GetFont()
+    {
+        return m_font;
     }
 }

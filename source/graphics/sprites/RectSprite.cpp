@@ -18,4 +18,15 @@ namespace Graphics
     {
         return RectangleBounds{GetPosition(), m_size};
     }
+
+    void RectSprite::SetPosition(Vector2 position)
+    {
+        m_position = position;
+    }
+
+    void RectSprite::SetCenter(Vector2 position)
+    {
+        Vector2 size = this->GetBounds().GetSize();
+        this->SetPosition(Vector2{position.x - size.x / 2, position.y - size.y / 2});
+    }
 }

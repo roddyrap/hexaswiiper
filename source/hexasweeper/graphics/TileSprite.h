@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "graphics/sprites/RectSprite.h"
 #include "TileHexSprite.h"
 
 namespace Hexasweeper::Graphics
@@ -10,8 +11,9 @@ namespace Hexasweeper::Graphics
     class TileSprite : public ::Graphics::Sprite
     {
     public:
-        TileSprite(f32 xpos, f32 ypos, u32 radius) :
-            m_hexSprite{xpos, ypos, radius}, m_innerSprite{nullptr}, m_xpos{xpos},
+        TileSprite(f32 xpos, f32 ypos, u32 radius) : TileSprite{xpos, ypos, radius, nullptr} {}
+        TileSprite(f32 xpos, f32 ypos, u32 radius, std::unique_ptr<::Graphics::RectSprite>&& inner_sprite) :
+            m_hexSprite{xpos, ypos, radius}, m_innerSprite{std::move(inner_sprite)}, m_xpos{xpos},
             m_ypos{ypos}, m_radius{radius} {}
 
         virtual void Render() override
@@ -40,12 +42,17 @@ namespace Hexasweeper::Graphics
             m_ypos = ypos;
 
             m_hexSprite.SetCenter(xpos, ypos);
-            // TODO: Set inner sprite's center (probably need centerable concept). 
+            m_innerSprite->SetCenter({xpos, ypos});
+        }
+
+        void SetTileHexSprite(TileHexSprite&& hex_sprite)
+        {
+            m_hexSprite = hex_sprite;
         }
 
     private:
         TileHexSprite m_hexSprite;
-        std::unique_ptr<::Graphics::Sprite> m_innerSprite;
+        std::unique_ptr<::Graphics::RectSprite> m_innerSprite;
 
         f32 m_xpos;
         f32 m_ypos;

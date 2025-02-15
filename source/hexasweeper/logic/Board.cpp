@@ -43,6 +43,7 @@ std::vector<Vector2Int> Hexasweeper::Logic::Board::RevealTile(Vector2Int coordin
 bool Hexasweeper::Logic::Board::FlagTile(Vector2Int coordinates)
 {
     TileState& tile_state = m_tiles[coordinates];
+    if (tile_state.is_revealed) return false;
     if (tile_state.is_flagged)
     {
         ++m_num_flags;
@@ -74,6 +75,11 @@ std::optional<bool> Hexasweeper::Logic::Board::IsGameOver()
     if (m_unflagged_bombs == 0) return true;
 
     return std::nullopt;
+}
+
+const Hexasweeper::Logic::TileState& Hexasweeper::Logic::Board::GetTileState(Vector2Int coordinates) const
+{
+    return m_tiles.at(coordinates);
 }
 
 void Hexasweeper::Logic::Board::InitializeBombs(Vector2Int protected_center)

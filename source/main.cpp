@@ -7,7 +7,8 @@
 #include "hexasweeper/Game.h"
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
-#include "TTFont.h"
+#include "TTFFont.h"
+#include "graphics/sprites/TextSprite.h"
 
 #include "sprites/ImageSprite.h"
 
@@ -53,10 +54,10 @@ void play_game()
 
     // Initialize remote pointer to the screen.
     WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
-    TTFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
+    std::shared_ptr<TTFFont> robotoFont = std::make_shared<TTFFont>(Roboto_Regular_ttf, Roboto_Regular_ttf_size);
 
     // ImageSprite sampleImg{Player1_png};
-    Hexasweeper::Game hexasweeper_game{Vector2{256, 256}, 10, 10, 10};
+    Hexasweeper::Game hexasweeper_game{robotoFont,Vector2{256, 256}, 10, 10, 10};
 
     // Loop forever (gameloop).
     while(true)
@@ -72,7 +73,22 @@ void play_game()
             break;
         }
 
+        if (pressedButtons & WPAD_BUTTON_A)
+        {
+            hexasweeper_game.RevealTile(wiimoteCursor.GetPosition());
+        }
+        else if (pressedButtons & WPAD_BUTTON_B)
+        {
+            hexasweeper_game.FlagTile(wiimoteCursor.GetPosition());
+        }
+
         hexasweeper_game.GetTilemap().Render();
+
+        Vector2Int coordinates = hexasweeper_game.GetTilemap().PointToCoordinates(wiimoteCursor.GetPosition());
+        char *text = nullptr;
+        asprintf(&text, "Current Coordinates: %d, %d", coordinates.x, coordinates.y);
+        GRRLIB_PrintfTTF(0, 0, robotoFont->GetFont(), text, 10, RGBA(255, 255, 255, 255));
+        free(text);
 
         // WiiMote cursor should be rendered last so that it would not be covered by other objects.
         wiimoteCursor.Render();
@@ -82,6 +98,7 @@ void play_game()
     }
 }
 
+// TODO: This project should be called 'Hexaswiiper'! it's genius!
 int main(int argc, char **argv)
 {
     init_wii();

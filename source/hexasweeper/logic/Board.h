@@ -33,6 +33,8 @@ namespace Hexasweeper::Logic
 
         std::optional<bool> IsGameOver();
 
+        const TileState& GetTileState(Vector2Int coordinates) const;
+
     private:
         void InitializeBombs(Vector2Int protected_center);
 

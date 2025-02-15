@@ -21,6 +21,36 @@ struct Vector2Base
         return x == other.x && y == other.y;
     }
 
+    template<Numeric MulType>
+    friend Vector2Base<NumberType> operator*(Vector2Base<NumberType> lhs, const MulType& rhs)
+    {
+        lhs.x *= rhs;
+        lhs.y *= rhs;
+        return lhs;
+    }
+
+    // x * x, y * y
+    Vector2Base<NumberType> operator*(const Vector2Base<NumberType>& rhs) const
+    {
+        return {this->x * rhs.x, this->y * rhs.y};
+    }
+
+    friend Vector2Base<NumberType> operator+(Vector2Base<NumberType> lhs, const Vector2Base<NumberType>& rhs)
+    {
+        lhs.x += rhs.x;
+        lhs.y += rhs.y;
+
+        return lhs;
+    }
+
+    friend Vector2Base<NumberType> operator-(Vector2Base<NumberType> lhs, const Vector2Base<NumberType>& rhs)
+    {
+        lhs.x -= rhs.x;
+        lhs.y -= rhs.y;
+
+        return lhs;
+    }
+
     NumberType x;
     NumberType y;
 };

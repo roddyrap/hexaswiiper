@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_TTFONT_H
-#define GRAPHICS_TTFONT_H
+#ifndef GRAPHICS_TTFFONT_H
+#define GRAPHICS_TTFFONT_H
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 
 namespace Graphics
 {
-    class TTFont
+    class TTFFont
     {
     public:
         // It's really wasteful (Loading and unloading the font each call), but can be nice
@@ -17,13 +17,15 @@ namespace Graphics
         static void DebugPrintf(Vector2Int position, const char* fmt, ...);
 
     public:
-        TTFont(const uint8_t* fontData, size_t fontDataSize, int fontSize);
-        TTFont(const uint8_t* fontData, size_t fontDataSize) :
-            TTFont(fontData, fontDataSize, DEFAULT_FONT_SIZE) {}
-        ~TTFont();
+        TTFFont(const uint8_t* fontData, size_t fontDataSize, int fontSize);
+        TTFFont(const uint8_t* fontData, size_t fontDataSize) :
+            TTFFont(fontData, fontDataSize, DEFAULT_FONT_SIZE) {}
+        ~TTFFont();
 
         int Printf(Vector2Int position, const char* fmt, ...);
         int Printf(Vector2Int position, const char* fmt, va_list args);
+
+        GRRLIB_ttfFont *GetFont();
     private:
         static constexpr int DEFAULT_FONT_SIZE = 32;
 
@@ -32,4 +34,4 @@ namespace Graphics
     };
 }
 
-#endif // GRAPHICS_TTFONT_H
+#endif // GRAPHICS_TTFFONT_H

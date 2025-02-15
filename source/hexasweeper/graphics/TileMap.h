@@ -12,45 +12,20 @@ namespace Hexasweeper::Graphics
     class Tilemap : public ::Graphics::Sprite
     {
     public:
-        Tilemap(Vector2 position, u32 hexagon_radius = 32) :
-            m_tiles{}, m_position{position}, m_hexagon_radius{hexagon_radius} {}
+        Tilemap(Vector2 position, u32 hexagon_radius = 32);
 
-        void CreateTile(Vector2Int coordinates)
-        {
-            Vector2 tile_position = this->CalculatePosition(coordinates);
-            m_tiles.emplace(std::make_pair(coordinates, TileSprite{tile_position.x, tile_position.y, m_hexagon_radius}));
-        }
+        void CreateTile(Vector2Int coordinates);
+        void SetTile(Vector2Int coordinates, TileSprite&& sprite);
 
-        virtual Vector2 GetPosition() override
-        {
-            return m_position;
-        }
+        virtual Vector2 GetPosition() override;
 
-        virtual void Render() override
-        {
-            for (auto& tile : m_tiles)
-            {
-                tile.second.Render();
-            }
-        }
+        virtual void Render() override;
 
+        Vector2Int PointToCoordinates(Vector2 point);
 
-    private:
-        Vector2 CalculatePosition(Vector2Int coordinates)
-        {
-            Vector2 hexagonalPosition;
-            Vector2 origin = this->GetPosition();
+        Vector2 CalculatePosition(Vector2Int coordinates);
 
-            if (coordinates.y % 2 == 1)
-            {
-                origin.x += std::sqrt(3.0f) * m_hexagon_radius / 2.0f;
-            }
-
-            hexagonalPosition.x = origin.x + std::sqrt(3.0f) * m_hexagon_radius * coordinates.x;
-            hexagonalPosition.y = origin.y + 1.5f * m_hexagon_radius * coordinates.y;
-
-            return hexagonalPosition;
-        }
+        u32 GetHexagonRadius() const;
 
     private:
         std::unordered_map<Vector2Int, TileSprite> m_tiles;
