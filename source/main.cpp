@@ -4,7 +4,7 @@
 #include <wiiuse/wpad.h>
 #include <wiiuse/wiiuse.h>
 
-#include "hexasweeper/TileHexSprite.h"
+#include "hexasweeper/TileMap.h"
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
 #include "TTFont.h"
@@ -56,8 +56,12 @@ void play_game()
     TTFont robotoFont{Roboto_Regular_ttf, Roboto_Regular_ttf_size};
 
     // ImageSprite sampleImg{Player1_png};
-
-    GRRLIB_texImg* newTexture = GRRLIB_LoadTexturePNG(WiiLogo_png);
+    Hexasweeper::Graphics::Tilemap tilemap{{256, 256}};
+    tilemap.CreateTile({0, 2});
+    tilemap.CreateTile({0, 1});
+    tilemap.CreateTile({0, 0});
+    tilemap.CreateTile({1, 0});
+    tilemap.CreateTile({2, 0});
 
     // Loop forever (gameloop).
     while(true)
@@ -73,11 +77,10 @@ void play_game()
             break;
         }
 
-        // The Sprite class keeps track of all active sprites, so it isn't needed to be done manually.
-        Sprite::RenderActive();
+        tilemap.Render();
 
-        robotoFont.Printf(Vector2Int{0, 10}, "Image size: %d, %d", newTexture->w, newTexture->h);
-        GRRLIB_DrawImg(10, 50, newTexture, 0, 1, 1, ACTUAL_WHITE);
+        // WiiMote cursor should be rendered last so that it would not be covered by other objects.
+        wiimoteCursor.Render();
 
         VIDEO_WaitVSync();
         GRRLIB_Render();

@@ -13,7 +13,7 @@ namespace Graphics
         static void RenderActive();
 
         Sprite();
-        ~Sprite();
+        virtual ~Sprite();
 
         virtual void Render() = 0;
         virtual Vector2 GetPosition() = 0;

@@ -31,6 +31,12 @@ namespace Hexasweeper::Graphics
             return Vector2{m_xpos, m_ypos};
         }
 
+        void SetCenter(f32 xpos, f32 ypos)
+        {
+            m_xpos = xpos;
+            m_ypos = ypos;
+        }
+
     private:
             f32 m_xpos;
             f32 m_ypos;
