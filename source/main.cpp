@@ -51,7 +51,7 @@ void init_wii()
 // A separate scope that closes before GRRLIB_Exit in order to ensure clean destructors.
 void play_game()
 {
-    GRRLIB_SetBackgroundColour(200, 200, 200, 255);
+    GRRLIB_SetBackgroundColour(87, 87, 87, 255);
 
     // Initialize remote pointer to the screen.
     WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
@@ -94,12 +94,6 @@ void play_game()
         hexasweeper_game.GetTilemap().Move(Vector2{static_cast<f32>(movement.x), static_cast<f32>(movement.y)} * 5);
 
         hexasweeper_game.GetTilemap().Render();
-
-        Vector2Int coordinates = hexasweeper_game.GetTilemap().PointToCoordinates(wiimoteCursor.GetPosition());
-        char *text = nullptr;
-        asprintf(&text, "Current Coordinates: %d, %d", coordinates.x, coordinates.y);
-        GRRLIB_PrintfTTF(0, 0, robotoFont.get(), text, 15, RGBA(255, 255, 255, 255));
-        free(text);
 
         // WiiMote cursor should be rendered last so that it would not be covered by other objects.
         wiimoteCursor.Render();
