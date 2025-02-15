@@ -6,7 +6,7 @@ Hexasweeper::Graphics::Tilemap::Tilemap(Vector2 position, u32 hexagon_radius) :
 void Hexasweeper::Graphics::Tilemap::CreateTile(Vector2Int coordinates)
 {
     Vector2 tile_position = this->CalculatePosition(coordinates);
-    m_tiles.emplace(std::make_pair(coordinates, TileSprite{tile_position.x, tile_position.y, m_hexagon_radius}));
+    this->SetTile(coordinates, TileSprite{tile_position.x, tile_position.y, m_hexagon_radius});
 }
 
 
@@ -19,12 +19,24 @@ void Hexasweeper::Graphics::Tilemap::SetTile(Vector2Int coordinates, TileSprite&
     }
 
     m_tiles.insert(std::pair<Vector2Int, TileSprite>{coordinates, std::move(sprite)});
+    this->UpdateBounds(coordinates);
+}
+
+void Hexasweeper::Graphics::Tilemap::SetTopLeft(Vector2 position)
+{
+    Vector2 difference = position - m_bounds.GetTopLeft();
+    this->Move(difference);
 }
 
 void Hexasweeper::Graphics::Tilemap::Move(Vector2 difference)
 {
     m_position = m_position + difference;
-    this->UpdatePositions();
+    m_bounds = ::Graphics::RectangleBounds{m_bounds.GetTopLeft() + difference, m_bounds.GetSize()};
+
+    for (auto& tile : m_tiles)
+    {
+        tile.second.SetCenter(this->CalculatePosition(tile.first));
+    }
 }
 
 Vector2 Hexasweeper::Graphics::Tilemap::GetPosition()
@@ -97,10 +109,19 @@ u32 Hexasweeper::Graphics::Tilemap::GetHexagonRadius() const
     return m_hexagon_radius;
 }
 
-void Hexasweeper::Graphics::Tilemap::UpdatePositions()
+RectangleBounds Hexasweeper::Graphics::Tilemap::GetBounds()
 {
-    for (auto& tile : m_tiles)
-    {
-        tile.second.SetCenter(this->CalculatePosition(tile.first));
-    }
+    return m_bounds;
+}
+
+void Hexasweeper::Graphics::Tilemap::UpdateBounds(Vector2Int new_coordinates)
+{
+    Vector2 new_center = this->CalculatePosition(new_coordinates);
+
+    // Check that both top-left and bottom-right are inside the bounds.
+    Vector2 top_left = new_center - m_hexagon_radius;
+    Vector2 bottom_right = new_center + m_hexagon_radius;
+
+    m_bounds.UpdateToFit(top_left);
+    m_bounds.UpdateToFit(bottom_right);
 }

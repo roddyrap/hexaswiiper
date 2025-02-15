@@ -59,7 +59,8 @@ void play_game()
     std::shared_ptr<GRRLIB_ttfFont> comfortaa_font = load_ttf_font(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size);
 
     // ImageSprite sampleImg{Player1_png};
-    Hexasweeper::Game hexasweeper_game{comfortaa_font,Vector2{256, 256}, 10, 10, 10};
+    Hexasweeper::Game hexasweeper_game{comfortaa_font, Vector2{}, 10, 10, 10};
+    hexasweeper_game.GetTilemap().SetTopLeft({10, 10});
 
     // Loop forever (gameloop).
     while(true)

@@ -7,6 +7,8 @@
 #include <tgmath.h>
 #include <unordered_map>
 
+using ::Graphics::RectangleBounds;
+
 namespace Hexasweeper::Graphics
 {
     class Tilemap : public ::Graphics::Sprite
@@ -17,6 +19,7 @@ namespace Hexasweeper::Graphics
         void CreateTile(Vector2Int coordinates);
         void SetTile(Vector2Int coordinates, TileSprite&& sprite);
 
+        void SetTopLeft(Vector2 position);
         void Move(Vector2 difference);
 
         virtual Vector2 GetPosition() override;
@@ -29,13 +32,16 @@ namespace Hexasweeper::Graphics
 
         u32 GetHexagonRadius() const;
 
+        RectangleBounds GetBounds();
     private:
-        void UpdatePositions();
+        void UpdateBounds(Vector2Int new_coordinates);
 
     private:
         std::unordered_map<Vector2Int, TileSprite> m_tiles;
         Vector2 m_position;
         u32 m_hexagon_radius;
+
+        RectangleBounds m_bounds;
     };
 }
 

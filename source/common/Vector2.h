@@ -21,11 +21,33 @@ struct Vector2Base
         return x == other.x && y == other.y;
     }
 
+    Vector2Base<NumberType> operator-()
+    {
+        return Vector2Base<NumberType>{-this->x, -this->y};
+    }
+
+
     template<Numeric MulType>
     friend Vector2Base<NumberType> operator*(Vector2Base<NumberType> lhs, const MulType& rhs)
     {
         lhs.x *= rhs;
         lhs.y *= rhs;
+        return lhs;
+    }
+
+    template<Numeric MinusType>
+    friend Vector2Base<NumberType> operator-(Vector2Base<NumberType> lhs, const MinusType& rhs)
+    {
+        lhs.x -= rhs;
+        lhs.y -= rhs;
+        return lhs;
+    }
+
+    template<Numeric PlusType>
+    friend Vector2Base<NumberType> operator+(Vector2Base<NumberType> lhs, const PlusType& rhs)
+    {
+        lhs.x += rhs;
+        lhs.y += rhs;
         return lhs;
     }
 

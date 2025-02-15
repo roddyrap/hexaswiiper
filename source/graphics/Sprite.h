@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "GraphicsUtils.h"
+#include "RectangleBounds.h"
 
 #include <vector>
 
