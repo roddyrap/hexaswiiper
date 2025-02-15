@@ -9,15 +9,14 @@
 #include <memory>
 
 #include "RectSprite.h"
-#include "graphics/TTFFont.h"
 
 namespace Graphics
 {
     class TextSprite : public RectSprite
     {
     public:
-        TextSprite(std::shared_ptr<TTFFont> font, std::string text);
-        TextSprite(Vector2 position, std::shared_ptr<TTFFont> font, std::string text, u32 font_size, u32 color);
+        TextSprite(std::shared_ptr<GRRLIB_ttfFont> font, std::string text);
+        TextSprite(Vector2 position, std::shared_ptr<GRRLIB_ttfFont> font, std::string text, u32 font_size, u32 color);
         ~TextSprite();
 
         virtual void Render() override;
@@ -27,7 +26,7 @@ namespace Graphics
         void UpdateTextSize();
 
     private:
-        std::shared_ptr<TTFFont> m_font;
+        std::shared_ptr<GRRLIB_ttfFont> m_font;
         std::string m_text{};
 
         u32 m_font_size{10};

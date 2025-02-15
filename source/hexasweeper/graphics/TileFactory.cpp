@@ -43,7 +43,7 @@ TileSprite Hexasweeper::Graphics::CreateFlagTile(Vector2 position, u32 radius)
 
 }
 
-TileSprite Hexasweeper::Graphics::CreateNearbyTile(std::shared_ptr<TTFFont> font, u8 num_nearby, Vector2 position, u32 radius)
+TileSprite Hexasweeper::Graphics::CreateNearbyTile(std::shared_ptr<GRRLIB_ttfFont> font, u8 num_nearby, Vector2 position, u32 radius)
 {
     u32 color = UINT32_MAX;
     switch (num_nearby)

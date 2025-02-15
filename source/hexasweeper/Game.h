@@ -3,14 +3,13 @@
 
 #include "logic/Board.h"
 #include "graphics/TileMap.h"
-#include "graphics/TTFFont.h"
 
 namespace Hexasweeper
 {
     class Game
     {
     public:
-        Game(std::shared_ptr<::Graphics::TTFFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs);
+        Game(std::shared_ptr<GRRLIB_ttfFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs);
 
         void RevealTile(Vector2 screen_point);
         void FlagTile(Vector2 screen_point);
@@ -24,7 +23,7 @@ namespace Hexasweeper
         Logic::Board m_board;
         Graphics::Tilemap m_tilemap;
 
-        std::shared_ptr<::Graphics::TTFFont> m_font;
+        std::shared_ptr<GRRLIB_ttfFont> m_font;
     };
 }
 

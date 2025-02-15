@@ -5,7 +5,7 @@
 
 #define PI 3.14159265
 
-void Graphics::Draw_BaseHexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle, u32 color)
+void Graphics::Draw_Hexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle, u32 color)
 {
     GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, 8);
         GX_Position3f32(xpos, ypos, 0.0f);
@@ -25,10 +25,10 @@ void Graphics::Draw_BaseHexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle,
 
 void Graphics::Draw_PointyHexagon(f32 xpos, f32 ypos, f32 radius, u32 color)
 {
-    Draw_BaseHexagon(xpos, ypos, radius, 90.0, color);
+    Draw_Hexagon(xpos, ypos, radius, 90.0, color);
 }
 
 void Graphics::Draw_FlatHexagon(f32 xpos, f32 ypos, f32 radius, u32 color)
 {
-    Draw_BaseHexagon(xpos, ypos, radius, 0.0, color);
+    Draw_Hexagon(xpos, ypos, radius, 0.0, color);
 }

@@ -2,7 +2,7 @@
 
 #include "graphics/TileFactory.h"
 
-Hexasweeper::Game::Game(std::shared_ptr<::Graphics::TTFFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_font{font}, m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}
+Hexasweeper::Game::Game(std::shared_ptr<GRRLIB_ttfFont> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_font{font}, m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}
 {
     for (u32 row_index = 0; row_index < num_rows; ++row_index)
     {
