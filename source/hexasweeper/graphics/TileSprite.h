@@ -42,7 +42,11 @@ namespace Hexasweeper::Graphics
             m_ypos = ypos;
 
             m_hexSprite.SetCenter(xpos, ypos);
-            m_innerSprite->SetCenter({xpos, ypos});
+
+            if (m_innerSprite != nullptr)
+            {
+                m_innerSprite->SetCenter({xpos, ypos});
+            }
         }
 
         void SetTileHexSprite(TileHexSprite&& hex_sprite)

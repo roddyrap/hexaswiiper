@@ -21,6 +21,12 @@ void Hexasweeper::Graphics::Tilemap::SetTile(Vector2Int coordinates, TileSprite&
     m_tiles.insert(std::pair<Vector2Int, TileSprite>{coordinates, std::move(sprite)});
 }
 
+void Hexasweeper::Graphics::Tilemap::Move(Vector2 difference)
+{
+    m_position = m_position + difference;
+    this->UpdatePositions();
+}
+
 Vector2 Hexasweeper::Graphics::Tilemap::GetPosition()
 {
     return m_position;
@@ -89,4 +95,12 @@ Vector2 Hexasweeper::Graphics::Tilemap::CalculatePosition(Vector2Int coordinates
 u32 Hexasweeper::Graphics::Tilemap::GetHexagonRadius() const
 {
     return m_hexagon_radius;
+}
+
+void Hexasweeper::Graphics::Tilemap::UpdatePositions()
+{
+    for (auto& tile : m_tiles)
+    {
+        tile.second.SetCenter(this->CalculatePosition(tile.first));
+    }
 }

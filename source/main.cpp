@@ -66,6 +66,7 @@ void play_game()
         WPAD_ScanPads();
 
         u32 pressedButtons = WPAD_ButtonsDown(WPAD_CHAN_0);
+        u32 heldButtons = WPAD_ButtonsHeld(WPAD_CHAN_0);
 
         // If [HOME] was pressed on the first Wiimote, break out of the loop
         if (pressedButtons & WPAD_BUTTON_HOME)
@@ -81,6 +82,14 @@ void play_game()
         {
             hexasweeper_game.FlagTile(wiimoteCursor.GetPosition());
         }
+
+        Vector2Int movement{0, 0};
+        if (heldButtons & WPAD_BUTTON_UP) movement.y += 1;
+        if (heldButtons & WPAD_BUTTON_DOWN) movement.y -= 1;
+        if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1;
+        if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1;
+
+        hexasweeper_game.GetTilemap().Move(Vector2{movement.x, movement.y} * 5);
 
         hexasweeper_game.GetTilemap().Render();
 

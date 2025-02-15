@@ -17,6 +17,8 @@ namespace Hexasweeper::Graphics
         void CreateTile(Vector2Int coordinates);
         void SetTile(Vector2Int coordinates, TileSprite&& sprite);
 
+        void Move(Vector2 difference);
+
         virtual Vector2 GetPosition() override;
 
         virtual void Render() override;
@@ -26,6 +28,9 @@ namespace Hexasweeper::Graphics
         Vector2 CalculatePosition(Vector2Int coordinates);
 
         u32 GetHexagonRadius() const;
+
+    private:
+        void UpdatePositions();
 
     private:
         std::unordered_map<Vector2Int, TileSprite> m_tiles;
