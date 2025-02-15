@@ -20,6 +20,7 @@ namespace Graphics
         virtual void Render() override;
         virtual RectangleBounds GetBounds() override;
 
+        Vector2 GetScale();
     protected:
         virtual GRRLIB_texImg* GetTexture();
 

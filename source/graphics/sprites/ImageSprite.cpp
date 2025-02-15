@@ -50,4 +50,9 @@ namespace Graphics
     {
         return m_texture;
     }
+
+    Vector2 ImageSprite::GetScale()
+    {
+        return m_scale;
+    }
 }

@@ -10,6 +10,7 @@ public:
     virtual void Render() override;
 private:
     static const uint8_t* GetImageByChannel(int channel);
+    static u32 GetPlayerColor(int player_index);
 
     static constexpr uint32_t SPRITE_COLOR = 0xFFFFFFFF;
 
