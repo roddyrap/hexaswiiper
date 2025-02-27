@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 
+#include "graphics/text/Font.h"
 #include "TileSprite.h"
 
 namespace Hexasweeper::Graphics
@@ -34,7 +35,7 @@ namespace Hexasweeper::Graphics
 
     TileSprite CreateFlagTile(Vector2 position, u32 radius);
 
-    TileSprite CreateNearbyTile(std::shared_ptr<GRRLIB_ttfFont> font, u8 num_nearby, Vector2 position, u32 radius);
+    TileSprite CreateNearbyTile(std::shared_ptr<::Graphics::Font> font, u8 num_nearby, Vector2 position, u32 radius);
 }
 
 #endif // HEXASWEEPER_GRAPHICS_TILE_FACTORY_H

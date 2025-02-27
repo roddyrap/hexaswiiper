@@ -17,7 +17,7 @@ include $(DEVKITPPC)/wii_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source/ source/graphics/ source/graphics/sprites/ source/hexasweeper/ source/hexasweeper/logic/ source/hexasweeper/graphics/
+SOURCES		:=	source/ source/graphics/ source/graphics/sprites/ source/graphics/text/ source/hexasweeper/ source/hexasweeper/logic/ source/hexasweeper/graphics/ source/common/
 DATA		:=	data/
 INCLUDES	:=	source/ source/graphics/
 
@@ -25,7 +25,7 @@ INCLUDES	:=	source/ source/graphics/
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE)
+CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE) `$(PREFIX)pkg-config freetype2 --cflags`
 CXXFLAGS	=	$(CFLAGS) -std=c++20
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -34,7 +34,7 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 # any extra libraries we wish to link with the project
 # the order can-be/is critical
 #---------------------------------------------------------------------------------
-LIBS	:= -lgrrlib -lfreetype -lbz2 -lfat -ljpeg -lpngu -lpng -lz
+LIBS	:= -lgrrlib -lfreetype -lbz2 -lfat -ljpeg -lpngu -lpng -lz -lharfbuzz `$(PREFIX)pkg-config freetype2 --libs`
 LIBS	+= -lwiiuse
 #LIBS	+= -lmodplay -laesnd
 LIBS	+= -lbte -logc -lm
@@ -113,6 +113,8 @@ clean:
 run:
 	wiiload $(TARGET).dol
 
+emulate: $(TARGET).elf
+	dolphin-emu-nogui $(TARGET).elf
 
 #---------------------------------------------------------------------------------
 else

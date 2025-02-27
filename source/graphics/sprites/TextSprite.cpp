@@ -2,17 +2,22 @@
 
 namespace Graphics
 {
-    TextSprite::TextSprite(std::shared_ptr<GRRLIB_ttfFont> font, std::string text) : TextSprite{Vector2{}, font, text, 10, UINT32_MAX}
+    TextSprite::TextSprite(std::shared_ptr<Graphics::Font> font, const std::string& text) : TextSprite{Vector2{}, font, text, 10, UINT32_MAX}
     {}
 
-    TextSprite::TextSprite(Vector2 position, std::shared_ptr<GRRLIB_ttfFont> font, std::string text, u32 font_size, uint32_t color) :
+    TextSprite::TextSprite(Vector2 position, std::shared_ptr<Graphics::Font> font, const std::string& text, u32 font_size, uint32_t color) :
         RectSprite{position, Vector2{}, color, false}, m_font{font}, m_text{text}, m_font_size{font_size}
     {
-        this->UpdateTextSize();
+        this->RasterizeText();
     }
 
     TextSprite::~TextSprite()
-    {}
+    {
+        if (m_cached_texture != nullptr)
+        {
+            GRRLIB_FreeTexture(m_cached_texture);
+        }
+    }
 
     void TextSprite::Render()
     {
@@ -20,22 +25,42 @@ namespace Graphics
 
         // Get from function to allow overloading position.
         Vector2 position = GetPosition();
-        GRRLIB_PrintfTTF(static_cast<int>(position.x), static_cast<int>(position.y), m_font.get(), m_text.c_str(), m_font_size, m_color);
+        if (m_cached_texture != nullptr)
+        {
+            GRRLIB_DrawImg(static_cast<int>(position.x), static_cast<int>(position.y), m_cached_texture, 0, 1, 1, m_color);
+        }
     }
 
     RectangleBounds TextSprite::GetBounds()
     {
-        return RectangleBounds{this->GetPosition(), {m_size.x, m_size.y}};
+        Vector2 size{0, 0};
+        if (m_cached_texture != nullptr)
+        {
+            size = Vector2{static_cast<float>(m_cached_texture->w), static_cast<float>(m_cached_texture->h)};
+        }
+
+        return RectangleBounds{this->GetPosition(), size};
     }
 
-    void TextSprite::UpdateTextSize()
+    void TextSprite::RasterizeText()
     {
-        // TODO: I think the third argument is font size??
-        u32 text_width = GRRLIB_WidthTTF(m_font.get(), m_text.c_str(), m_font_size);
+        if (m_cached_texture != nullptr)
+        {
+            GRRLIB_FreeTexture(m_cached_texture);
+        }
 
-        m_size.x = text_width;
+        m_cached_texture = m_font->Rasterize(m_text);
+    }
 
-        // TODO: This is incredibly random, I don't know how to get this.
-        m_size.y = static_cast<f32>(m_font_size) * 1.2f;
+    void TextSprite::SetText(const std::string& text)
+    {
+        // Don't rasterize if the text is the same.
+        if (m_text == text) 
+        {
+            return;
+        }
+
+        m_text = text;
+        this->RasterizeText();
     }
 }

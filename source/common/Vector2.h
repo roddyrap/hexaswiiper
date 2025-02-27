@@ -57,6 +57,15 @@ struct Vector2Base
         return {this->x * rhs.x, this->y * rhs.y};
     }
 
+    Vector2Base<NumberType>& operator+=(const Vector2Base<NumberType>& rhs)
+    {
+        this->x += rhs.x;
+        this->y += rhs.y;
+
+        return *this;
+    }
+
+
     friend Vector2Base<NumberType> operator+(Vector2Base<NumberType> lhs, const Vector2Base<NumberType>& rhs)
     {
         lhs.x += rhs.x;

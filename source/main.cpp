@@ -9,7 +9,7 @@
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
 #include "graphics/sprites/TextSprite.h"
-#include "graphics/scoped_resources.h"
+#include "graphics/text/Font.h"
 
 #include "sprites/ImageSprite.h"
 
@@ -55,8 +55,10 @@ void play_game()
 
     // Initialize remote pointer to the screen.
     WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
-    std::shared_ptr<GRRLIB_ttfFont> robotoFont = load_ttf_font(Roboto_Regular_ttf, Roboto_Regular_ttf_size);
-    std::shared_ptr<GRRLIB_ttfFont> comfortaa_font = load_ttf_font(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size);
+
+    std::shared_ptr<FT_LibraryRec_> ft_library = create_ft_library();
+    std::shared_ptr<Graphics::Font> roboto_font = std::make_shared<Graphics::Font>(Roboto_Regular_ttf, Roboto_Regular_ttf_size, ft_library);
+    std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, ft_library);
 
     // ImageSprite sampleImg{Player1_png};
     Hexasweeper::Game hexasweeper_game{comfortaa_font, Vector2{}, 10, 10, 10};
