@@ -3,6 +3,7 @@
 
 #include <gctypes.h>
 #include "common/Vector2.h"
+#include "graphics/RectangleBounds.h"
 
 namespace Graphics
 {
@@ -17,6 +18,7 @@ namespace Graphics
 
     // Rounded rectangles.
     void Draw_RoundedRectangle(f32 xpos, f32 ypos, f32 width, f32 height, f32 border_radius, u32 color, bool filled);
+    void Draw_RoundedRectangle(RectangleBounds rect, f32 border_radius, u32 color, bool filled);
 }
 
 #endif // GRAPHICS_SHAPES_H

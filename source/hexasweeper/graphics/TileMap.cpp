@@ -1,7 +1,9 @@
 #include "TileMap.h"
 
+#include <tgmath.h>
+
 Hexasweeper::Graphics::Tilemap::Tilemap(Vector2 position, u32 hexagon_radius) :
-    m_tiles{}, m_position{position}, m_hexagon_radius{hexagon_radius} {}
+    m_tiles{}, m_hexagon_radius{hexagon_radius}, m_position{position}, m_clip_rect{std::nullopt} {}
 
 void Hexasweeper::Graphics::Tilemap::CreateTile(Vector2Int coordinates)
 {
@@ -46,9 +48,20 @@ Vector2 Hexasweeper::Graphics::Tilemap::GetPosition()
 
 void Hexasweeper::Graphics::Tilemap::Render()
 {
+    if (m_clip_rect.has_value())
+    {
+        GX_SetScissor(m_clip_rect->GetLeft(), m_clip_rect->GetTop(), m_clip_rect->GetSize().x, m_clip_rect->GetSize().y);
+    }
+
     for (auto& tile : m_tiles)
     {
         tile.second.Render();
+    }
+
+    // Reset the scissor to what I assume is the default.
+    if (m_clip_rect.has_value())
+    {
+        GX_SetScissor(0,0,rmode->fbWidth,rmode->efbHeight);
     }
 }
 
@@ -109,9 +122,25 @@ u32 Hexasweeper::Graphics::Tilemap::GetHexagonRadius() const
     return m_hexagon_radius;
 }
 
-RectangleBounds Hexasweeper::Graphics::Tilemap::GetBounds()
+RectangleBounds Hexasweeper::Graphics::Tilemap::GetBounds() const
 {
     return m_bounds;
+}
+
+void Hexasweeper::Graphics::Tilemap::SetClipRect(std::optional<RectangleBounds> clip_rect)
+{
+    m_clip_rect = clip_rect;
+
+}
+
+void Hexasweeper::Graphics::Tilemap::ClearClipRect()
+{
+    SetClipRect(std::nullopt);
+}
+
+std::optional<RectangleBounds> Hexasweeper::Graphics::Tilemap::GetClipRect() const
+{
+    return m_clip_rect;
 }
 
 void Hexasweeper::Graphics::Tilemap::UpdateBounds(Vector2Int new_coordinates)

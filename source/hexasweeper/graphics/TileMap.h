@@ -4,8 +4,8 @@
 #include "common/Vector2.h"
 #include "TileSprite.h"
 
-#include <tgmath.h>
 #include <unordered_map>
+#include <optional>
 
 using ::Graphics::RectangleBounds;
 
@@ -32,14 +32,20 @@ namespace Hexasweeper::Graphics
 
         u32 GetHexagonRadius() const;
 
-        RectangleBounds GetBounds();
+        RectangleBounds GetBounds() const;
+
+        void SetClipRect(std::optional<RectangleBounds> clip_rect);
+        void ClearClipRect();
+        std::optional<RectangleBounds> GetClipRect() const;
     private:
         void UpdateBounds(Vector2Int new_coordinates);
 
     private:
         std::unordered_map<Vector2Int, TileSprite> m_tiles;
-        Vector2 m_position;
         u32 m_hexagon_radius;
+        
+        Vector2 m_position;
+        std::optional<RectangleBounds> m_clip_rect;
 
         RectangleBounds m_bounds;
     };

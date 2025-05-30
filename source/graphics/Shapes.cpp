@@ -169,3 +169,9 @@ void Graphics::Draw_RoundedRectangle(f32 xpos, f32 ypos, f32 width, f32 height, 
     // Top Right.
     Draw_SemiCircle(inner_right, inner_top, border_radius, color, filled, 270, 360);
 }
+
+void Graphics::Draw_RoundedRectangle(RectangleBounds rect, f32 border_radius, u32 color, bool filled)
+{
+    Vector2 size = rect.GetSize();
+    Draw_RoundedRectangle(rect.GetLeft(), rect.GetTop(), size.x, size.y, border_radius, color, filled);
+}
