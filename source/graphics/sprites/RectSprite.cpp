@@ -14,6 +14,12 @@ namespace Graphics
         return m_position;
     }
 
+    bool RectSprite::GetFill()
+    {
+        return m_fill;
+    }
+
+
     RectangleBounds RectSprite::GetBounds()
     {
         return RectangleBounds{GetPosition(), m_size};

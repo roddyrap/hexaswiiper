@@ -15,6 +15,7 @@
 
 #include "Player1_png.h"
 #include "WiiLogo_png.h"
+#include "Logo1_png.h"
 
 #include "Roboto-Regular_ttf.h"
 #include "Comfortaa-Regular_ttf.h"
@@ -60,7 +61,17 @@ void play_game()
     std::shared_ptr<Graphics::Font> roboto_font = std::make_shared<Graphics::Font>(Roboto_Regular_ttf, Roboto_Regular_ttf_size, ft_library);
     std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, ft_library);
 
-    // ImageSprite sampleImg{Player1_png};
+    // Initialize UI.
+    ImageSprite logo_sprite{Logo1_png, {0.1f, 0.1f}};
+    TextSprite logo_text{comfortaa_font, "Hexaswiiper"};
+    logo_sprite.SetPosition({5, 2});
+    logo_text.SetPosition({logo_sprite.GetBounds().GetRight() + 8, 13});
+
+    // Initialize board mask (Rounded rectangle with borders).
+    GRRLIB_texImg *a = GRRLIB_CreateEmptyTexture(500, 415);
+    Draw_RoundedRectangle(5, 60, 500, 415, 5, RGBA(0, 0, 0, 255), false);
+
+    // Initialize tilemap & game.
     Hexasweeper::Game hexasweeper_game{comfortaa_font, Vector2{}, 10, 10, 10};
     hexasweeper_game.GetTilemap().SetTopLeft({10, 10});
 
@@ -88,18 +99,30 @@ void play_game()
             hexasweeper_game.FlagTile(wiimoteCursor.GetPosition());
         }
 
-        Vector2Int movement{0, 0};
-        if (heldButtons & WPAD_BUTTON_UP) movement.y += 1;
-        if (heldButtons & WPAD_BUTTON_DOWN) movement.y -= 1;
-        if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1;
-        if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1;
+        Vector2 movement{0, 0};
+        if (heldButtons & WPAD_BUTTON_UP) movement.y += 1.0;
+        if (heldButtons & WPAD_BUTTON_DOWN) movement.y -= 1.0;
+        if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1.0;
+        if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1.0;
 
-        hexasweeper_game.GetTilemap().Move(Vector2{static_cast<f32>(movement.x), static_cast<f32>(movement.y)} * 5);
-
+        hexasweeper_game.GetTilemap().Move(movement * 5);
+        
+        // Draw game.
         hexasweeper_game.GetTilemap().Render();
+
+        // Draw UI
+        logo_sprite.Render();
+        logo_text.Render();
 
         // WiiMote cursor should be rendered last so that it would not be covered by other objects.
         wiimoteCursor.Render();
+
+        // Draw_SemiCircle(300, 40, 5, RGBA(255, 0, 0, 255), false, 0, 90);
+
+        // DEBUG: Debug draws.
+        // Draw_RoundedRectangle(5, 60, 500, 415, 5, RGBA(0, 0, 0, 255), false);
+        // Draw_RoundedRectangle(510, 60, 125, 80, 5, RGBA(0, 0, 0, 255), false);
+        // Draw_RoundedRectangle(510, 145, 125, 330, 5, RGBA(0, 0, 0, 255), false);
 
         VIDEO_WaitVSync();
         GRRLIB_Render();
