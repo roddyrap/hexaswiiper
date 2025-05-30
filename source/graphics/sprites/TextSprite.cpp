@@ -2,11 +2,11 @@
 
 namespace Graphics
 {
-    TextSprite::TextSprite(std::shared_ptr<Graphics::Font> font, const std::string& text) : TextSprite{Vector2{}, font, text, 10, UINT32_MAX}
+    TextSprite::TextSprite(std::shared_ptr<Graphics::Font> font, const std::string& text) : TextSprite{Vector2{}, font, text, Font::DEFAULT_FONT_SIZE, UINT32_MAX}
     {}
 
     TextSprite::TextSprite(Vector2 position, std::shared_ptr<Graphics::Font> font, const std::string& text, u32 font_size, uint32_t color) :
-        RectSprite{position, Vector2{}, color, false}, m_font{font}, m_text{text}, m_font_size{font_size}
+        RectSprite{position, Vector2{}, color, false}, m_font{font}, m_text{text}, m_text_size{font_size}
     {
         this->RasterizeText();
     }
@@ -21,13 +21,14 @@ namespace Graphics
 
     void TextSprite::Render()
     {
-        if (m_text.size() == 0) return;
+        // Will only happen if text size is zero, but that's the relevant variable to check.
+        if (m_cached_texture == nullptr) return;
 
         // Get from function to allow overloading position.
         Vector2 position = GetPosition();
         if (m_cached_texture != nullptr)
         {
-            GRRLIB_DrawImg(static_cast<int>(position.x), static_cast<int>(position.y), m_cached_texture, 0, 1, 1, m_color);
+            GRRLIB_DrawImg(position.x, position.y, m_cached_texture, 0, 1, 1, m_color);
         }
     }
 
@@ -49,7 +50,8 @@ namespace Graphics
             GRRLIB_FreeTexture(m_cached_texture);
         }
 
-        m_cached_texture = m_font->Rasterize(m_text);
+        if (m_text.size() == 0) return;
+        m_cached_texture = m_font->Rasterize(m_text, m_text_size);
     }
 
     void TextSprite::SetText(const std::string& text)
@@ -61,6 +63,17 @@ namespace Graphics
         }
 
         m_text = text;
+        this->RasterizeText();
+    }
+
+    void TextSprite::SetTextSize(u32 text_size)
+    {
+        if (m_text_size == text_size)
+        {
+            return;
+        }
+
+        m_text_size = text_size;
         this->RasterizeText();
     }
 }

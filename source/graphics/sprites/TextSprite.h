@@ -24,6 +24,7 @@ namespace Graphics
         virtual RectangleBounds GetBounds() override;
 
         void SetText(const std::string& text);
+        void SetTextSize(u32 text_size);
 
     private:
         void RasterizeText();
@@ -34,7 +35,7 @@ namespace Graphics
 
         GRRLIB_texImg *m_cached_texture = nullptr;
 
-        u32 m_font_size;
+        u32 m_text_size;
     };
 }
 

@@ -2,24 +2,34 @@
 
 #include "common/Crash.h"
 
+#include <freetype/ftsizes.h>
+
 using namespace Graphics;
 
 #define GET_FT_F26Dot6_WHOLE(a) ((a) >> 6)
 #define GET_FT_F26Dot6_PARTIAL(a) ((a) & 0b111111)
 
+#define F26Dot6_WHOLE(a) ((a) << 6)
+
 #define GET_FT_F16Dot16_WHOLE(a) ((a) >> 16)
 #define GET_FT_F16Dot16_PARTIAL(a) ((a) & UINT16_MAX)
 
-#define FT_ASSERT(ft_call)                                                              \
-    do                                                                                  \
-    {                                                                                   \
-        auto __ft_error = (ft_call);                                                    \
-        if (__ft_error != 0)                                                            \
-        {                                                                               \
+
+#define FT_ASSERT(ft_call)                                                                \
+    do                                                                                    \
+    {                                                                                     \
+        auto __ft_error = (ft_call);                                                      \
+        if (__ft_error != 0)                                                              \
+        {                                                                                 \
             SYS_Report("FT Error: %s (0x%x)\n", FT_Error_String(__ft_error), __ft_error); \
-            CRASH(1);                                                                   \
-        }                                                                               \
+            CRASH(1);                                                                     \
+        }                                                                                 \
     } while (0)
+
+void Graphics::HBBufferDestroyer::operator()(hb_buffer_t *p)
+{
+    hb_buffer_destroy(p);
+}
 
 std::shared_ptr<FT_LibraryRec_> Graphics::create_ft_library()
 {
@@ -30,7 +40,7 @@ std::shared_ptr<FT_LibraryRec_> Graphics::create_ft_library()
 }
 
 Graphics::Font::Font(const uint8_t* font_data, size_t font_buffer_size, std::shared_ptr<FT_LibraryRec_> ft_library) :
-    m_raw_font_data{font_data, font_data + font_buffer_size}, m_ft_library{ft_library}
+    m_raw_font_data{font_data, font_data + font_buffer_size}, m_ft_library{ft_library}, m_size_map{}
 {
     if (m_ft_library == nullptr)
     {
@@ -39,10 +49,8 @@ Graphics::Font::Font(const uint8_t* font_data, size_t font_buffer_size, std::sha
 
     FT_ASSERT(FT_New_Memory_Face(m_ft_library.get(), font_data, font_buffer_size, 0, &m_ft_face));
 
-    // TODO: I don't know what these numbers are, and allow for dynamic sizes...
-    FT_ASSERT(FT_Set_Char_Size(m_ft_face, 0, 2048, 0, 0));
-
     m_hb_font = hb_ft_font_create_referenced(m_ft_face);
+
     ASSERT_NOT_NULL(m_hb_font);
 }
 
@@ -52,14 +60,11 @@ Graphics::Font::Font(const uint8_t* font_data, size_t font_buffer_size) :
 Graphics::Font::~Font()
 {
     hb_font_destroy(m_hb_font);
-
-    // TODO: Destory face. FT_Done_FreeType removes all faces, but because font lifetime is
-    //       decoupled from library lifetime, they may not necessarily happen at the same time.
 }
 
-Vector2Int Graphics::Font::MeasureText(const std::string& text)
+Vector2Int Graphics::Font::MeasureText(const std::string& text, text_size_t text_size)
 {
-    owned_hb_buffer_t hb_buffer= this->ShapeText(text);
+    owned_hb_buffer_t hb_buffer= this->ShapeText(text, text_size);
 
     return this->MeasureText(hb_buffer.get());
 }
@@ -106,9 +111,9 @@ Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
 }
 
 // NOTE: The caller is responsible for managing the texture as a resource.
-GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text)
+GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t text_size)
 {
-    owned_hb_buffer_t hb_buffer= this->ShapeText(text);
+    owned_hb_buffer_t hb_buffer= this->ShapeText(text, text_size);
     Vector2Int text_dimensions = this->MeasureText(hb_buffer.get());
 
     // Even though it's not documented FUCKING ANYWHERRE, the texture size needs to be divisible by 4.
@@ -181,8 +186,10 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text)
     return texture;
 }
 
-owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text)
+owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text, text_size_t text_size)
 {
+    SetTextSize(text_size);
+
     owned_hb_buffer_t hb_buffer{hb_buffer_create()};
     ASSERT_NOT_NULL(hb_buffer.get());
 
@@ -193,4 +200,25 @@ owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text)
     ASSERT_EQUAL(hb_shape_full(m_hb_font, hb_buffer.get(), nullptr, 0, NULL), true);
 
     return hb_buffer;
+}
+
+void Graphics::Font::SetTextSize(text_size_t text_size)
+{
+    if (text_size == 0) text_size = DEFAULT_FONT_SIZE;
+
+    if (!m_size_map.contains(text_size))
+    {
+        m_size_map[text_size] = {};
+        FT_ASSERT(FT_New_Size(m_ft_face, &m_size_map[text_size]));
+
+        FT_ASSERT(FT_Activate_Size(m_size_map[text_size]));
+        FT_ASSERT(FT_Set_Char_Size(m_ft_face, 0, F26Dot6_WHOLE(text_size), 0, 0));
+    }
+    else
+    {
+        FT_ASSERT(FT_Activate_Size(m_size_map[text_size]));
+    }
+
+    // Notify HarfBuzz to fetch spacing changes.
+    hb_ft_font_changed(m_hb_font);
 }
