@@ -4,10 +4,16 @@
 
 #include <freetype/ftsizes.h>
 
+#include <cmath>
+
 using namespace Graphics;
 
+constexpr int BIT6_MASK = 0b111111;
+
 #define GET_FT_F26Dot6_WHOLE(a) ((a) >> 6)
-#define GET_FT_F26Dot6_PARTIAL(a) ((a) & 0b111111)
+#define GET_FT_F26Dot6_PARTIAL(a) ((a) & BIT6_MASK)
+
+#define GET_FT_F26Dot6_FLOAT(a) (static_cast<float>(GET_FT_F26Dot6_WHOLE((a))) + (static_cast<float>(GET_FT_F26Dot6_PARTIAL((a))) / BIT6_MASK))
 
 #define F26Dot6_WHOLE(a) ((a) << 6)
 
@@ -25,6 +31,8 @@ using namespace Graphics;
             CRASH(1);                                                                     \
         }                                                                                 \
     } while (0)
+
+using Vector2Pos = Vector2Base<FT_Pos>;
 
 void Graphics::HBBufferDestroyer::operator()(hb_buffer_t *p)
 {
@@ -69,6 +77,9 @@ Vector2Int Graphics::Font::MeasureText(const std::string& text, text_size_t text
     return this->MeasureText(hb_buffer.get());
 }
 
+// In order to consider subpixel size values, this method reads the hb/ft positions in their native
+// F26Dot6 form, only converting to actual pixel integers at the end.
+// This means integers aren't really integers.
 Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
 {
     unsigned int glyph_count = 0;
@@ -78,39 +89,42 @@ Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
     hb_glyph_info_t *glyph_info = hb_buffer_get_glyph_infos(hb_buffer, &glyph_count);
     ASSERT_NOT_NULL(glyph_info);
 
-    Vector2Int text_size{0, 0};
-    Vector2Int glyph_advance{0, 0};
+    Vector2Pos text_size{0, 0};
+    Vector2Pos glyph_advance{0, 0};
     for (unsigned int glyph_index = 0; glyph_index < glyph_count; ++glyph_index)
     {
         // Need to load freetype glyph in order to get actual glyph sizes.
         FT_ASSERT(FT_Load_Glyph(m_ft_face, glyph_info[glyph_index].codepoint, FT_LOAD_DEFAULT));
 
-        Vector2Int glyph_size = Vector2Int{
-            static_cast<int>(GET_FT_F26Dot6_WHOLE(m_ft_face->glyph->metrics.width)),
-            static_cast<int>(GET_FT_F26Dot6_WHOLE(m_ft_face->glyph->metrics.height))
+        Vector2Pos glyph_size = Vector2Pos{
+            m_ft_face->glyph->metrics.width,
+            m_ft_face->glyph->metrics.height
         };
 
-        // Harfbuzz hb_position_t is in pixels * 64 for subpixel precision, which is not necessary.
-        int x_advance = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].x_advance);
-        int y_advance = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].y_advance);
-        int x_offset = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].x_offset);
-        int y_offset = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].y_offset);
+        FT_Pos x_advance = glyph_pos[glyph_index].x_advance;
+        FT_Pos y_advance = glyph_pos[glyph_index].y_advance;
+        FT_Pos x_offset = glyph_pos[glyph_index].x_offset;
+        FT_Pos y_offset = glyph_pos[glyph_index].y_offset;
 
-        Vector2Int hb_glyph_offset = Vector2Int{x_offset, y_offset};
-        Vector2Int ft_glyph_offset = Vector2Int{m_ft_face->glyph->bitmap_left, 0};
-        
-        Vector2Int glyph_offset = hb_glyph_offset + ft_glyph_offset;
+        Vector2Pos hb_glyph_offset = Vector2Pos{x_offset, y_offset};
 
         // Calculate the size of the previous glyphs if there's overlap and one is bigger, or the current extents. 
-        text_size = Vector2Int{MAX(text_size.x, glyph_advance.x + glyph_offset.x + glyph_size.x), MAX(text_size.y, glyph_advance.y + glyph_offset.y + glyph_size.y)};
+        text_size = Vector2Pos{
+            MAX(text_size.x, glyph_advance.x + hb_glyph_offset.x + glyph_size.x),
+            MAX(text_size.y, glyph_advance.y + hb_glyph_offset.y + glyph_size.y)
+        };
 
-        glyph_advance += Vector2Int{x_advance, y_advance};
+        glyph_advance += Vector2Pos{x_advance, y_advance};
     }
 
-    return text_size;
+    return Vector2Int{
+        static_cast<int>(std::ceil(GET_FT_F26Dot6_FLOAT(text_size.x))),
+        static_cast<int>(std::ceil(GET_FT_F26Dot6_FLOAT(text_size.y)))
+    };
 }
 
 // NOTE: The caller is responsible for managing the texture as a resource.
+// TODO: 'y', 'g' and 'p' are't rendered correctly (Missing bottom) for some reason.
 GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t text_size)
 {
     owned_hb_buffer_t hb_buffer= this->ShapeText(text, text_size);
@@ -129,17 +143,13 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
     hb_glyph_position_t *glyph_pos = hb_buffer_get_glyph_positions(hb_buffer.get(), &glyph_count);
     ASSERT_NOT_NULL(glyph_pos);
 
-    Vector2Int text_advance{0, 0};
+    Vector2Pos text_advance{0, 0};
     for (unsigned int glyph_index = 0; glyph_index < glyph_count; ++glyph_index)
     {
-        // According to docs names are maxed at 63 characters. 
-        char glyphname[64]{};
-        hb_font_get_glyph_name(m_hb_font, glyph_info[glyph_index].codepoint, glyphname, sizeof (glyphname));
-
-        int x_advance = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].x_advance);
-        int y_advance = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].y_advance);
-        int x_offset = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].x_offset);
-        int y_offset = GET_FT_F26Dot6_WHOLE(glyph_pos[glyph_index].y_offset);
+        FT_Pos x_advance = glyph_pos[glyph_index].x_advance;
+        FT_Pos y_advance = glyph_pos[glyph_index].y_advance;
+        FT_Pos x_offset = glyph_pos[glyph_index].x_offset;
+        FT_Pos y_offset = glyph_pos[glyph_index].y_offset;
 
         FT_ASSERT(FT_Load_Glyph(m_ft_face, glyph_info[glyph_index].codepoint, FT_LOAD_DEFAULT | FT_LOAD_RENDER));
         ASSERT_NOT_NULL(m_ft_face->glyph);
@@ -147,7 +157,7 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
         // I think it can happen for non-graphical glyphs like space.
         if (m_ft_face->glyph->bitmap.buffer == nullptr)
         {
-            text_advance = text_advance + Vector2Int{x_advance, y_advance};
+            text_advance = text_advance + Vector2Pos{x_advance, y_advance};
             continue;
         }
 
@@ -161,8 +171,8 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
                 uint8_t grayscale = m_ft_face->glyph->bitmap.buffer[flat_index];
 
                 // Place the glyph in the correct location, provided by harfbuzz.
-                size_t texture_row = text_advance.y + y_offset - (m_ft_face->glyph->bitmap_top) + bmp_row + texture->h;
-                size_t texture_col = text_advance.x + x_offset + (m_ft_face->glyph->bitmap_left) + bmp_col;
+                size_t texture_row = static_cast<int>(std::round(GET_FT_F26Dot6_FLOAT(text_advance.y + y_offset))) - (m_ft_face->glyph->bitmap_top) + bmp_row + texture->h;
+                size_t texture_col = static_cast<int>(std::round(GET_FT_F26Dot6_FLOAT(text_advance.x + x_offset))) + (m_ft_face->glyph->bitmap_left) + bmp_col;
                 if (texture_row < 0 || texture_row >= texture->h || texture_col < 0 || texture_col >= texture->w)
                 {
                     // TODO: Is there a way to make this a warning?
@@ -180,7 +190,7 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
             }
         }
 
-        text_advance = text_advance + Vector2Int{x_advance, y_advance};
+        text_advance = text_advance + Vector2Pos{x_advance, y_advance};
     }
 
     return texture;
@@ -192,6 +202,11 @@ owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text, text_size_t
 
     owned_hb_buffer_t hb_buffer{hb_buffer_create()};
     ASSERT_NOT_NULL(hb_buffer.get());
+
+    if (!hb_buffer_allocation_successful(hb_buffer.get()))
+    {
+        CRASH(1);
+    }
 
     hb_buffer_add_utf8(hb_buffer.get(), text.c_str(), text.size(), 0, -1);
 
