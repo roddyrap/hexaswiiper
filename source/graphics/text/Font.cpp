@@ -77,10 +77,15 @@ Vector2Int Graphics::Font::MeasureText(const std::string& text, text_size_t text
     return this->MeasureText(hb_buffer.get());
 }
 
+Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer) const
+{
+    return MeasureTextEx(hb_buffer).first;
+}
+
 // In order to consider subpixel size values, this method reads the hb/ft positions in their native
 // F26Dot6 form, only converting to actual pixel integers at the end.
 // This means integers aren't really integers.
-Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
+std::pair<Vector2Int, float> Graphics::Font::MeasureTextEx(hb_buffer_t *hb_buffer) const
 {
     unsigned int glyph_count = 0;
     hb_glyph_position_t *glyph_pos = hb_buffer_get_glyph_positions(hb_buffer, &glyph_count);
@@ -89,6 +94,7 @@ Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
     hb_glyph_info_t *glyph_info = hb_buffer_get_glyph_infos(hb_buffer, &glyph_count);
     ASSERT_NOT_NULL(glyph_info);
 
+    FT_Pos descender_size{0};
     Vector2Pos text_size{0, 0};
     Vector2Pos glyph_advance{0, 0};
     for (unsigned int glyph_index = 0; glyph_index < glyph_count; ++glyph_index)
@@ -97,9 +103,11 @@ Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
         FT_ASSERT(FT_Load_Glyph(m_ft_face, glyph_info[glyph_index].codepoint, FT_LOAD_DEFAULT));
 
         Vector2Pos glyph_size = Vector2Pos{
-            m_ft_face->glyph->metrics.width,
-            m_ft_face->glyph->metrics.height
+            m_ft_face->glyph->metrics.horiBearingX + m_ft_face->glyph->metrics.width,
+            m_ft_face->glyph->metrics.horiBearingY
         };
+
+        descender_size = std::max(descender_size, m_ft_face->glyph->metrics.height - m_ft_face->glyph->metrics.horiBearingY);
 
         FT_Pos x_advance = glyph_pos[glyph_index].x_advance;
         FT_Pos y_advance = glyph_pos[glyph_index].y_advance;
@@ -117,18 +125,22 @@ Vector2Int Graphics::Font::MeasureText(hb_buffer_t *hb_buffer)
         glyph_advance += Vector2Pos{x_advance, y_advance};
     }
 
-    return Vector2Int{
+    Vector2Int bounding_box{
         static_cast<int>(std::ceil(GET_FT_F26Dot6_FLOAT(text_size.x))),
-        static_cast<int>(std::ceil(GET_FT_F26Dot6_FLOAT(text_size.y)))
+        static_cast<int>(std::ceil(GET_FT_F26Dot6_FLOAT(text_size.y + descender_size)))
     };
+
+    // From the top.
+    float baseline = GET_FT_F26Dot6_FLOAT(bounding_box.y - descender_size);
+
+    return std::pair{bounding_box, baseline};
 }
 
 // NOTE: The caller is responsible for managing the texture as a resource.
-// TODO: 'y', 'g' and 'p' are't rendered correctly (Missing bottom) for some reason.
 GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t text_size)
 {
     owned_hb_buffer_t hb_buffer= this->ShapeText(text, text_size);
-    Vector2Int text_dimensions = this->MeasureText(hb_buffer.get());
+    auto[text_dimensions, baseline] = this->MeasureTextEx(hb_buffer.get());
 
     // Even though it's not documented FUCKING ANYWHERRE, the texture size needs to be divisible by 4.
     Vector2Int div_four_text_dimensions{text_dimensions.x + 4 - text_dimensions.x % 4, text_dimensions.y + 4 - text_dimensions.y % 4};
@@ -171,7 +183,7 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
                 uint8_t grayscale = m_ft_face->glyph->bitmap.buffer[flat_index];
 
                 // Place the glyph in the correct location, provided by harfbuzz.
-                size_t texture_row = static_cast<int>(std::round(GET_FT_F26Dot6_FLOAT(text_advance.y + y_offset))) - (m_ft_face->glyph->bitmap_top) + bmp_row + texture->h;
+                size_t texture_row = static_cast<int>(std::round(GET_FT_F26Dot6_FLOAT(text_advance.y + y_offset))) - (m_ft_face->glyph->bitmap_top)  + bmp_row + texture->h + baseline;
                 size_t texture_col = static_cast<int>(std::round(GET_FT_F26Dot6_FLOAT(text_advance.x + x_offset))) + (m_ft_face->glyph->bitmap_left) + bmp_col;
                 if (texture_row < 0 || texture_row >= texture->h || texture_col < 0 || texture_col >= texture->w)
                 {
@@ -198,7 +210,7 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
 
 owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text, text_size_t text_size)
 {
-    SetTextSize(text_size);
+    this->SetTextSize(text_size);
 
     owned_hb_buffer_t hb_buffer{hb_buffer_create()};
     ASSERT_NOT_NULL(hb_buffer.get());

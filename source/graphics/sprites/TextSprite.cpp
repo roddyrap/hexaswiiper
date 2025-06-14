@@ -26,6 +26,12 @@ namespace Graphics
 
         // Get from function to allow overloading position.
         Vector2 position = GetPosition();
+
+#ifdef DEBUG_RENDER_TEXT_BOUNDING_BOX
+        // DEBUG: Rendering text rect.
+        RectSprite{position, this->GetBounds().GetSize(), RGBA(255, 0, 0, 128), true}.Render();
+#endif // DEBUG_RENDER_TEXT_BOUNDING_BOX
+
         if (m_cached_texture != nullptr)
         {
             GRRLIB_DrawImg(position.x, position.y, m_cached_texture, 0, 1, 1, m_color);
@@ -45,6 +51,8 @@ namespace Graphics
 
     void TextSprite::RasterizeText()
     {
+        // TODO: Support multiple lines by having multiple textures (One for each line) and by
+        //       rendering correctly using the measure text of each line.
         if (m_cached_texture != nullptr)
         {
             GRRLIB_FreeTexture(m_cached_texture);

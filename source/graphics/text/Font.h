@@ -42,7 +42,8 @@ namespace Graphics
 
     private:
         owned_hb_buffer_t ShapeText(const std::string& text, text_size_t text_size);
-        Vector2Int MeasureText(hb_buffer_t *hb_buffer);
+        Vector2Int MeasureText(hb_buffer_t *hb_buffer) const;
+        std::pair<Vector2Int, float> MeasureTextEx(hb_buffer_t *hb_buffer) const;
 
         void SetTextSize(text_size_t text_size);
 

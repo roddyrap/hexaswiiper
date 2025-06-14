@@ -25,7 +25,7 @@ INCLUDES	:=	source/ source/graphics/
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE) `$(PREFIX)pkg-config freetype2 --cflags`
+CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE) `$(PREFIX)pkg-config freetype2 --cflags` $(EXTRA_CFLAGS)
 CXXFLAGS	=	$(CFLAGS) -std=c++20
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
