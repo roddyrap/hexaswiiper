@@ -1,6 +1,7 @@
 #include "Font.h"
 
 #include "common/Crash.h"
+#include "common/Math.h"
 
 #include <freetype/ftsizes.h>
 
@@ -142,8 +143,12 @@ GRRLIB_texImg *Graphics::Font::Rasterize(const std::string& text, text_size_t te
     owned_hb_buffer_t hb_buffer= this->ShapeText(text, text_size);
     auto[text_dimensions, baseline] = this->MeasureTextEx(hb_buffer.get());
 
-    // Even though it's not documented FUCKING ANYWHERRE, the texture size needs to be divisible by 4.
-    Vector2Int div_four_text_dimensions{text_dimensions.x + 4 - text_dimensions.x % 4, text_dimensions.y + 4 - text_dimensions.y % 4};
+    // Even though it's not documented ANYWHERE, the texture size needs to be divisible by 4.
+    Vector2Int div_four_text_dimensions{
+        ceil_to_multiple<int>(text_dimensions.x, 4),
+        ceil_to_multiple<int>(text_dimensions.y, 4),
+    };
+
     GRRLIB_texImg *texture = GRRLIB_CreateEmptyTexture(div_four_text_dimensions.x, div_four_text_dimensions.y);
     ASSERT_NOT_NULL(texture);
 
