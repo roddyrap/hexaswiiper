@@ -41,7 +41,7 @@ void Hexasweeper::Graphics::Tilemap::Move(Vector2 difference)
     }
 }
 
-Vector2 Hexasweeper::Graphics::Tilemap::GetPosition()
+Vector2 Hexasweeper::Graphics::Tilemap::GetPosition() const
 {
     return m_position;
 }

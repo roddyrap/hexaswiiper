@@ -17,7 +17,7 @@ void Hexasweeper::Graphics::TileHexSprite::Render()
     ::Graphics::Draw_PointyHexagon(position.x, position.y, m_radius * 0.84, m_inner_color);
 }
 
-Vector2 Hexasweeper::Graphics::TileHexSprite::GetPosition()
+Vector2 Hexasweeper::Graphics::TileHexSprite::GetPosition() const
 {
     return Vector2{m_xpos, m_ypos};
 }

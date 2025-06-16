@@ -3,8 +3,6 @@
 #include "common/Math.h"
 #include <tgmath.h>
 #include <ogc/gx.h>
-#include <ogc/system.h>
-
 
 using namespace Graphics;
 
@@ -56,7 +54,6 @@ void  Graphics::Draw_SemiCircle(const f32 x, const f32 y, const f32 radius, cons
     constexpr int FULL_CIRCLE_PRECISION = 40;
 
     int num_points = std::round(FULL_CIRCLE_PRECISION / (360.0 / static_cast<float>(angle_diff)));
-    SYS_Report("Center: (x: %f, y: %f), Start: %d, End: %d => Diff: %d. Num points: %d\n", x, y, start_angle, end_angle, angle_diff, num_points);
     if (num_points == 0) return;
     else if (num_points == 1) {
         GX_Begin(GX_POINTS, 0, 1);
@@ -75,7 +72,6 @@ void  Graphics::Draw_SemiCircle(const f32 x, const f32 y, const f32 radius, cons
         {
             GX_Position3f32(center.x, center.y, 0.0f);
             GX_Color1u32(color);
-            SYS_Report("Triangle point: (x: %f, y: %f)\n", center.x, center.y);
         }
 
         for (const auto& current_angle : linspace(start_angle, start_angle + angle_diff, num_points))
@@ -83,7 +79,6 @@ void  Graphics::Draw_SemiCircle(const f32 x, const f32 y, const f32 radius, cons
             Vector2 position = center + PolarToCartesian(radius, current_angle);
             GX_Position3f32(position.x, position.y, 0.0f);
             GX_Color1u32(color);
-            SYS_Report("Semicircle point: Theta: %lf, (x: %f, y: %f)\n", current_angle, position.x, position.y);
         }
     GX_End();
 }

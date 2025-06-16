@@ -16,6 +16,9 @@ namespace Hexasweeper
         void FlagTile(Vector2 screen_point);
 
         Graphics::Tilemap& GetTilemap();
+        Logic::Board& GetBoard();
+
+        u64 GetStartTime() const;
 
     private:
         Graphics::TileSprite CreateTileSprite(Vector2Int coordinates);
@@ -23,6 +26,8 @@ namespace Hexasweeper
     private:
         Logic::Board m_board;
         Graphics::Tilemap m_tilemap;
+
+        u64 m_game_start_time;
 
         std::shared_ptr<::Graphics::Font> m_font;
     };

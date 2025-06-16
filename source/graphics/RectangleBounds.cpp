@@ -68,7 +68,6 @@ namespace Graphics
             m_size.x = point.x - m_topLeft.x;
         }
 
-
         if (point.y < GetTop())
         {
             float bottom = GetBottom();

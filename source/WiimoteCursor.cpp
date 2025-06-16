@@ -10,7 +10,7 @@ WiimoteCursor::WiimoteCursor(int wiimoteIndex) :
     ImageSprite{Vector2{}, GetImageByChannel(wiimoteIndex), Vector2{0.05f, 0.05f}, UINT32_MAX}, m_wiimoteIndex{wiimoteIndex}
 {}
 
-Vector2 WiimoteCursor::GetPosition()
+Vector2 WiimoteCursor::GetPosition() const
 {
     static ir_t irData;
     WPAD_IR(m_wiimoteIndex, &irData);

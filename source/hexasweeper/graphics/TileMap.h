@@ -22,7 +22,7 @@ namespace Hexasweeper::Graphics
         void SetTopLeft(Vector2 position);
         void Move(Vector2 difference);
 
-        virtual Vector2 GetPosition() override;
+        virtual Vector2 GetPosition() const override;
 
         virtual void Render() override;
 

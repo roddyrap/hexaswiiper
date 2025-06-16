@@ -21,7 +21,7 @@ namespace Graphics
         virtual ~TextSprite();
 
         virtual void Render() override;
-        virtual RectangleBounds GetBounds() override;
+        virtual RectangleBounds GetBounds() const override;
 
         void SetText(const std::string& text);
         void SetTextSize(u32 text_size);

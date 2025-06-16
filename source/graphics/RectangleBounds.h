@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_UTILS_H
-#define GRAPHICS_UTILS_H
+#ifndef GRAPHICS_RECTANGLE_BOUNDS_H
+#define GRAPHICS_RECTANGLE_BOUNDS_H
 
 #include "common/Vector2.h"
 
@@ -10,6 +10,7 @@ namespace Graphics
     public:
         RectangleBounds() : m_topLeft{}, m_size{} {}
         RectangleBounds(Vector2 topLeft, Vector2 size) : m_topLeft{topLeft}, m_size{size} {}
+
         float GetRight() const;
         float GetLeft() const;
         float GetTop() const;
@@ -31,4 +32,4 @@ namespace Graphics
     };
 }
 
-#endif // GRAPHICS_UTILS_H
+#endif // GRAPHICS_RECTANGLE_BOUNDS_H

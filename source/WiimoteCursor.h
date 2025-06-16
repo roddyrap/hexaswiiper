@@ -5,7 +5,7 @@ class WiimoteCursor : public Graphics::ImageSprite
 public:
     WiimoteCursor(int wiimoteIndex);
 
-    virtual Vector2 GetPosition() override;
+    virtual Vector2 GetPosition() const override;
 
     virtual void Render() override;
 private:

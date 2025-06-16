@@ -9,18 +9,23 @@ namespace Graphics
         GRRLIB_Rectangle(position.x, position.y, m_size.x, m_size.y, m_color, m_fill);
     }
 
-    Vector2 RectSprite::GetPosition()
+    Vector2 RectSprite::GetPosition() const
     {
         return m_position;
     }
 
-    bool RectSprite::GetFill()
+    bool RectSprite::GetFill() const
     {
         return m_fill;
     }
 
+    uint32_t RectSprite::GetColor() const
+    {
+        return m_color;
+    }
 
-    RectangleBounds RectSprite::GetBounds()
+
+    RectangleBounds RectSprite::GetBounds() const
     {
         return RectangleBounds{GetPosition(), m_size};
     }
@@ -34,5 +39,10 @@ namespace Graphics
     {
         Vector2 size = this->GetBounds().GetSize();
         this->SetPosition(Vector2{position.x - size.x / 2, position.y - size.y / 2});
+    }
+
+    void RectSprite::SetColor(uint32_t color)
+    {
+        m_color = color;
     }
 }

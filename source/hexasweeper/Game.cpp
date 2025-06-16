@@ -2,7 +2,7 @@
 
 #include "graphics/TileFactory.h"
 
-Hexasweeper::Game::Game(std::shared_ptr<::Graphics::Font> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}, m_font{font}
+Hexasweeper::Game::Game(std::shared_ptr<::Graphics::Font> font, Vector2 position, u32 num_rows, u32 num_columns, u32 num_bombs) : m_board{num_rows, num_columns, num_bombs}, m_tilemap{position}, m_game_start_time{}, m_font{font}
 {
     for (u32 row_index = 0; row_index < num_rows; ++row_index)
     {
@@ -20,6 +20,12 @@ void Hexasweeper::Game::RevealTile(Vector2 screen_point)
 
     const Hexasweeper::Logic::TileState tile_state = m_board.GetTileState(coordinates);
     std::vector<Vector2Int> changed_tiles{};
+
+    if (m_game_start_time == 0)
+    {
+        // TODO: See if there are good monotonic options.
+        m_game_start_time = time(nullptr);
+    }
 
     // Mimic left click - regular click that reveals hidden tiles.
     if (!tile_state.is_revealed)
@@ -59,6 +65,16 @@ void Hexasweeper::Game::FlagTile(Vector2 screen_point)
 Hexasweeper::Graphics::Tilemap& Hexasweeper::Game::GetTilemap()
 {
     return m_tilemap;
+}
+
+Hexasweeper::Logic::Board& Hexasweeper::Game::GetBoard()
+{
+    return m_board;
+}
+
+u64 Hexasweeper::Game::GetStartTime() const
+{
+    return m_game_start_time;
 }
 
 Hexasweeper::Graphics::TileSprite Hexasweeper::Game::CreateTileSprite(Vector2Int coordinates)

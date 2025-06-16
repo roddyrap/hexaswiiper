@@ -14,14 +14,14 @@ struct Vector2Base
 {
     Vector2Base() : x{}, y{} {}
     explicit Vector2Base(NumberType x) : x{x} {}
-    Vector2Base(NumberType x, NumberType y) : x{x}, y{y} {};
+    Vector2Base(NumberType x, NumberType y) : x{x}, y{y} {}
 
     bool operator==(const Vector2Base<NumberType>& other) const
     {
         return x == other.x && y == other.y;
     }
 
-    Vector2Base<NumberType> operator-()
+    Vector2Base<NumberType> operator-() const
     {
         return Vector2Base<NumberType>{-this->x, -this->y};
     }

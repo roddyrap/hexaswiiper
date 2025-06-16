@@ -93,6 +93,15 @@ const u8 Hexasweeper::Logic::Board::NearbyFlags(Vector2Int coordinates)
     return nearby_flags;
 }
 
+u32 Hexasweeper::Logic::Board::GetFlagsLeft() const
+{
+    return m_num_flags;
+}
+
+u32 Hexasweeper::Logic::Board::GetNumBombs() const
+{
+    return m_num_bombs;
+}
 
 void Hexasweeper::Logic::Board::InitializeBombs(Vector2Int protected_center)
 {

@@ -16,7 +16,7 @@ namespace Graphics
         virtual ~Sprite();
 
         virtual void Render() = 0;
-        virtual Vector2 GetPosition() = 0;
+        virtual Vector2 GetPosition() const = 0;
 
         // If sprite should be drawn to screen.
         void SetActive();

@@ -15,13 +15,16 @@ namespace Graphics
         {}
 
         virtual void Render() override;
-        virtual Vector2 GetPosition() override;
 
-        virtual RectangleBounds GetBounds();
+        virtual Vector2 GetPosition() const override;
+        bool GetFill() const;
+        uint32_t GetColor() const;
 
         virtual void SetPosition(Vector2 position);
         void SetCenter(Vector2 position);
+        void SetColor(uint32_t color);
 
+        virtual RectangleBounds GetBounds() const;
     protected:
         Vector2 m_position;
         Vector2 m_size;

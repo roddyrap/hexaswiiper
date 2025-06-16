@@ -19,7 +19,7 @@ void Hexasweeper::Graphics::TileSprite::Render()
     }
 }
 
-Vector2 Hexasweeper::Graphics::TileSprite::GetPosition()
+Vector2 Hexasweeper::Graphics::TileSprite::GetPosition() const
 {
     return Vector2{m_xpos, m_ypos};
 }

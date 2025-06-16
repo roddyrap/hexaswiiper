@@ -18,7 +18,7 @@ namespace Graphics
         ~ImageSprite();
 
         virtual void Render() override;
-        virtual RectangleBounds GetBounds() override;
+        virtual RectangleBounds GetBounds() const override;
 
         Vector2 GetScale();
     protected:

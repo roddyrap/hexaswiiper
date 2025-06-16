@@ -37,6 +37,10 @@ namespace Hexasweeper::Logic
         const u8 NearbyFlags(Vector2Int coordinates);
 
         std::vector<Vector2Int> GetNeighbores(Vector2Int originTile);
+
+        // Game Information.
+        u32 GetFlagsLeft() const;
+        u32 GetNumBombs() const;
     private:
         void InitializeBombs(Vector2Int protected_center);
 

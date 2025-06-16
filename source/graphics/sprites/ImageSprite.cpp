@@ -41,7 +41,7 @@ namespace Graphics
         GRRLIB_DrawImg(position.x, position.y, m_texture, 0, m_scale.x, m_scale.y, m_color);
     }
 
-    RectangleBounds ImageSprite::GetBounds()
+    RectangleBounds ImageSprite::GetBounds() const
     {
         return RectangleBounds{GetPosition(), Vector2{static_cast<f32>(m_texture->w), static_cast<f32>(m_texture->h)} * m_scale};
     }

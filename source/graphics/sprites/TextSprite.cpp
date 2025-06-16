@@ -38,7 +38,7 @@ namespace Graphics
         }
     }
 
-    RectangleBounds TextSprite::GetBounds()
+    RectangleBounds TextSprite::GetBounds() const
     {
         Vector2 size{0, 0};
         if (m_cached_texture != nullptr)

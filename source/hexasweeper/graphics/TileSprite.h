@@ -17,7 +17,7 @@ namespace Hexasweeper::Graphics
 
         virtual void Render() override;
 
-        virtual Vector2 GetPosition() override;
+        virtual Vector2 GetPosition() const override;
 
         void SetCenter(Vector2 center);
 
