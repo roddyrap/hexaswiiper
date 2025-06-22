@@ -24,6 +24,10 @@ namespace Graphics
         return m_color;
     }
 
+    Vector2 RectSprite::GetSize() const
+    {
+        return m_size;
+    }
 
     RectangleBounds RectSprite::GetBounds() const
     {
@@ -44,5 +48,10 @@ namespace Graphics
     void RectSprite::SetColor(uint32_t color)
     {
         m_color = color;
+    }
+
+    void RectSprite::SetSize(Vector2 size)
+    {
+        m_size = size;
     }
 }

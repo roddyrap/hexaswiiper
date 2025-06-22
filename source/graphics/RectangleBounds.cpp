@@ -43,6 +43,11 @@ namespace Graphics
         return Vector2{m_topLeft.x + m_size.x, m_topLeft.y + m_size.y};
     }
 
+    Vector2 RectangleBounds::GetCenter() const
+    {
+        return Vector2{m_topLeft.x + m_size.x / 2.0f, m_topLeft.y + m_size.y / 2.0f};
+    }
+
     Vector2 RectangleBounds::GetSize() const
     {
         return m_size;

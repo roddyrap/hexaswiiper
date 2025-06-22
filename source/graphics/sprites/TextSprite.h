@@ -20,6 +20,9 @@ namespace Graphics
         TextSprite(Vector2 position, std::shared_ptr<Graphics::Font> font, const std::string& text, u32 font_size, u32 color);
         virtual ~TextSprite();
 
+        // Disallow copies because of the raw pointer that is handled by this class.
+        TextSprite(TextSprite& other) = delete;
+
         virtual void Render() override;
         virtual RectangleBounds GetBounds() const override;
 

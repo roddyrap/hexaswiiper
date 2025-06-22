@@ -10,6 +10,7 @@ namespace Graphics
     public:
         RectangleBounds() : m_topLeft{}, m_size{} {}
         RectangleBounds(Vector2 topLeft, Vector2 size) : m_topLeft{topLeft}, m_size{size} {}
+        RectangleBounds(float topX, float topY, float sizeX, float sizeY) : m_topLeft{topX, topY}, m_size{sizeX, sizeY} {}
 
         float GetRight() const;
         float GetLeft() const;
@@ -20,6 +21,8 @@ namespace Graphics
         Vector2 GetTopRight() const;
         Vector2 GetBottomLeft() const;
         Vector2 GetBottomRight() const;
+
+        Vector2 GetCenter() const;
 
         Vector2 GetSize() const;
 
