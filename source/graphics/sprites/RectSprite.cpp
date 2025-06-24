@@ -14,6 +14,11 @@ namespace Graphics
         return m_position;
     }
 
+    Vector2 RectSprite::GetCenter() const
+    {
+        return this->GetBounds().GetCenter();
+    }
+
     bool RectSprite::GetFill() const
     {
         return m_fill;

@@ -25,10 +25,12 @@ namespace Graphics
         Vector2 GetCenter() const;
 
         Vector2 GetSize() const;
+        float GetArea() const;
 
         bool ContainsPoint(Vector2 point) const;
 
         void UpdateToFit(Vector2 point);
+        void UpdateToFit(RectangleBounds bounds);
     private:
         Vector2 m_topLeft;
         Vector2 m_size;

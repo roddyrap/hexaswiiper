@@ -1,5 +1,5 @@
-#ifndef HEXAGON_SPRITE_H
-#define HEXAGON_SPRITE_H
+#ifndef HEXASWEEPER_GRAPHICS_TILE_HEX_SPRITE_H
+#define HEXASWEEPER_GRAPHICS_TILE_HEX_SPRITE_H
 
 #include <grrlib.h>
 #include <gctypes.h>
@@ -40,4 +40,4 @@ namespace Hexasweeper::Graphics
     };
 }
 
-#endif // HEXAGON_SPRITE_H
+#endif // HEXASWEEPER_GRAPHICS_TILE_HEX_SPRITE_H

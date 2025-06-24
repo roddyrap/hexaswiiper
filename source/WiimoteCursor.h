@@ -1,3 +1,6 @@
+#ifndef WIIMOTE_CURSOR_H
+#define WIIMOTE_CURSOR_H
+
 #include "sprites/ImageSprite.h"
 
 class WiimoteCursor : public Graphics::ImageSprite
@@ -17,3 +20,5 @@ private:
     int m_wiimoteIndex;
     Vector2 m_lastValidPosition{0, 0};
 };
+
+#endif // WIIMOTE_CURSOR_H

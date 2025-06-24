@@ -17,7 +17,7 @@ include $(DEVKITPPC)/wii_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source/ source/graphics/ source/graphics/sprites/ source/graphics/text/ source/hexasweeper/ source/hexasweeper/logic/ source/hexasweeper/graphics/ source/common/
+SOURCES		:=	source/ source/graphics/ source/graphics/sprites/ source/graphics/layouts/ source/graphics/ui/ source/graphics/text/ source/hexasweeper/ source/hexasweeper/logic/ source/hexasweeper/graphics/ source/common/ source/scenes/
 DATA		:=	data/
 INCLUDES	:=	source/ source/graphics/
 
@@ -25,7 +25,7 @@ INCLUDES	:=	source/ source/graphics/
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -Wall  -Werror $(MACHDEP) $(INCLUDE) `$(PREFIX)pkg-config freetype2 --cflags` $(EXTRA_CFLAGS)
+CFLAGS	= -g -Wall -Werror $(MACHDEP) $(INCLUDE) `$(PREFIX)pkg-config freetype2 --cflags` $(EXTRA_CFLAGS)
 CXXFLAGS	=	$(CFLAGS) -std=c++20
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map

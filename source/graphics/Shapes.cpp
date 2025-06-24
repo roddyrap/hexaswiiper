@@ -6,11 +6,14 @@
 
 using namespace Graphics;
 
-void Graphics::Draw_Hexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle, u32 color)
+void Graphics::Draw_Hexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle, u32 color, bool filled)
 {
-    GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, 8);
-        GX_Position3f32(xpos, ypos, 0.0f);
-        GX_Color1u32(color);
+    GX_Begin(filled ? GX_TRIANGLEFAN : GX_LINESTRIP, GX_VTXFMT0, 7 + filled);
+        if (filled)
+        {
+            GX_Position3f32(xpos, ypos, 0.0f);
+            GX_Color1u32(color);
+        }
 
         for (f32 degree_angle = start_angle; degree_angle <= start_angle + 360.0; degree_angle += 360.0 / 6.0)
         {
@@ -24,14 +27,14 @@ void Graphics::Draw_Hexagon(f32 xpos, f32 ypos, f32 radius, f32 start_angle, u32
     GX_End();
 }
 
-void Graphics::Draw_PointyHexagon(f32 xpos, f32 ypos, f32 radius, u32 color)
+void Graphics::Draw_PointyHexagon(f32 xpos, f32 ypos, f32 radius, u32 color, bool filled)
 {
-    Draw_Hexagon(xpos, ypos, radius, 90.0, color);
+    Draw_Hexagon(xpos, ypos, radius, 90.0, color, filled);
 }
 
-void Graphics::Draw_FlatHexagon(f32 xpos, f32 ypos, f32 radius, u32 color)
+void Graphics::Draw_FlatHexagon(f32 xpos, f32 ypos, f32 radius, u32 color, bool filled)
 {
-    Draw_Hexagon(xpos, ypos, radius, 0.0, color);
+    Draw_Hexagon(xpos, ypos, radius, 0.0, color, filled);
 }
 
 void  Graphics::Draw_SemiCircle(const f32 x, const f32 y, const f32 radius, const u32 color,

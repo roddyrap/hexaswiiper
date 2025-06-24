@@ -7,6 +7,15 @@
         internal_crash(__FILE__, __LINE__, (exit_code)); \
     } while (0)
 
+#define ASSERT(expression)                   \
+        do                                   \
+        {                                    \
+            if (!(expression))               \
+            {                                \
+                CRASH(1);                    \
+            }                                \
+        } while (false);
+
 #define ASSERT_NOT_EQUAL(condition, fail_value) \
     do                                          \
     {                                           \

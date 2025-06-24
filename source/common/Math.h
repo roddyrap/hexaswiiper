@@ -30,4 +30,33 @@ T ceil_to_multiple(T value, T multiplier)
     return value + multiplier - (value % multiplier);
 }
 
+template <typename T> 
+concept number = std::is_integral<T>::value || std::is_floating_point<T>::value;
+
+template <number T>
+T clamp(T start, T end, T value)
+{
+    if (value < start) return start;
+    if (value > end) return end;
+
+    return value;
+}
+
+template <number T>
+T linear_interpolate(T start, T end, float fraction)
+{
+    // TODO: There must be a more efficient implementation.
+    fraction = clamp<float>(0, 1, fraction);
+    if (end < start)
+    {
+        T temp = start;
+        start = end;
+        end = temp;
+
+        fraction = 1.0f - fraction;
+    }
+
+    return start + static_cast<T>((end - start) * fraction);
+}
+
 #endif // COMMON_MATH_H

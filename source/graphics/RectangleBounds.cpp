@@ -53,6 +53,11 @@ namespace Graphics
         return m_size;
     }
 
+    float RectangleBounds::GetArea() const
+    {
+        return m_size.x * m_size.y;
+    }
+
     bool RectangleBounds::ContainsPoint(Vector2 point) const
     {
         return point.x >= GetLeft() && point.x <= GetRight() && point.y >= GetTop() && point.y <= GetBottom();
@@ -83,5 +88,13 @@ namespace Graphics
         {
             m_size.y = point.y - m_topLeft.y;
         }
+    }
+
+    void RectangleBounds::UpdateToFit(RectangleBounds bounds)
+    {
+        this->UpdateToFit(bounds.GetTopLeft());
+        this->UpdateToFit(bounds.GetTopRight());
+        this->UpdateToFit(bounds.GetBottomLeft());
+        this->UpdateToFit(bounds.GetBottomRight());
     }
 }
