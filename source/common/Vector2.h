@@ -12,9 +12,9 @@ concept Numeric = std::is_integral<T>::value || std::is_floating_point<T>::value
 template <Numeric NumberType>
 struct Vector2Base
 {
-    Vector2Base() : x{}, y{} {}
-    explicit Vector2Base(NumberType x) : x{x} {}
-    Vector2Base(NumberType x, NumberType y) : x{x}, y{y} {}
+    constexpr Vector2Base() : x{}, y{} {}
+    constexpr explicit Vector2Base(NumberType x) : x{x} {}
+    constexpr Vector2Base(NumberType x, NumberType y) : x{x}, y{y} {}
 
     bool operator==(const Vector2Base<NumberType>& other) const
     {

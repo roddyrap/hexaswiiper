@@ -43,21 +43,27 @@ std::string FormatDuration(uint64_t duration_seconds)
     );
 }
 
-std::unique_ptr<Hexasweeper::Game> CreateGame(std::shared_ptr<Font> title_font, const RectangleBounds& game_region)
+void GameScene::InitializeGame(std::shared_ptr<Font> title_font, const RectangleBounds& game_region)
 {
-    std::unique_ptr<Hexasweeper::Game> hexasweeper_game = std::make_unique<Hexasweeper::Game>(title_font, Vector2{}, 10, 10, 10);
-    Hexasweeper::Graphics::Tilemap *tilemap = &hexasweeper_game->GetTilemap();
+    m_hexasweeper_game = std::make_unique<Hexasweeper::Game>(
+        title_font,
+        Vector2{},
+        m_difficulty.board_size.y,
+        m_difficulty.board_size.x,
+        m_difficulty.num_bombs
+    );
 
-    tilemap->SetTopLeft(game_region.GetTopLeft());
+    m_hexasweeper_game->GetTilemap().SetTopLeft(game_region.GetTopLeft());
 
     // TODO: The clipping isn't perfect, the region border is a rounded rectangle which means that
     //       the corners are incorrect (Not clipped). This is known. My idea for solving it is by
     //       rendering the inverse of the rounded rectangle after the tilemap, which would cover
     //       the edges. Will also need to treat remote presses on the edges.
-    tilemap->SetClipRect(game_region);
-
-    return hexasweeper_game;
+    m_hexasweeper_game->GetTilemap().SetClipRect(game_region);
 }
+
+GameScene::GameScene(Hexasweeper::Difficulty difficulty) : m_difficulty{difficulty} {}
+GameScene::GameScene() : m_difficulty{Hexasweeper::TEST_DIFFICULTY} {}
 
 void GameScene::InitializeScene()
 {
@@ -103,10 +109,11 @@ void GameScene::InitializeScene()
     this->AddSprite(std::move(logo_text));
 
     // Initialize game.
-    m_hexasweeper_game = CreateGame(comfortaa_font, game_region);
+    this->InitializeGame(comfortaa_font, game_region);
 
     // Initialize info sprites.
-    std::unique_ptr<TextSprite> settings_text = std::make_unique<TextSprite>(roboto_font, "Difficulty: Whatever");
+    std::string difficulty_string = std::format("Difficulty: {}", m_difficulty.name);
+    std::unique_ptr<TextSprite> settings_text = std::make_unique<TextSprite>(roboto_font, difficulty_string);
     settings_text->SetPosition(settings_region.GetTopLeft() + Vector2{2, 10});
     settings_text->SetTextSize(14);
 
@@ -127,7 +134,7 @@ void GameScene::InitializeScene()
     // Interactive UI.
 
     this->AddButton(CreateRoundedRectangleTextButton([this, game_region, comfortaa_font](){
-            this->m_hexasweeper_game = CreateGame(comfortaa_font, game_region);
+            this->InitializeGame(comfortaa_font, game_region);
         },
         {info_region.GetBottomLeft() + Vector2{12.5f, -45}, {100.0, 30.0}},
         5,
