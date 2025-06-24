@@ -59,155 +59,141 @@ std::unique_ptr<Hexasweeper::Game> CreateGame(std::shared_ptr<Font> title_font, 
     return hexasweeper_game;
 }
 
-// A separate scope that closes before GRRLIB_Exit in order to ensure clean destructors.
-void play_game()
+void GameScene::InitializeScene()
 {
-    GRRLIB_SetBackgroundColour(87, 87, 87, 255);
+    std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, this->GetFTLibrary());
+    std::shared_ptr<Graphics::Font> roboto_font = std::make_shared<Graphics::Font>(Roboto_Regular_ttf, Roboto_Regular_ttf_size, this->GetFTLibrary());
 
-    // Initialize remote pointer to the screen.
-    WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
-
-    std::shared_ptr<FT_LibraryRec_> ft_library = create_ft_library();
-    std::shared_ptr<Graphics::Font> roboto_font = std::make_shared<Graphics::Font>(Roboto_Regular_ttf, Roboto_Regular_ttf_size, ft_library);
-    std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, ft_library);
+    this->SetCursor(std::make_unique<WiimoteCursor>(WPAD_CHAN_0));
 
     // Initialize screen regions.
     RectangleBounds game_region = RectangleBounds{{5, 60}, {500, 415}};
     RectangleBounds settings_region = RectangleBounds{{510, 60}, {125, 80}};
     RectangleBounds info_region = RectangleBounds{{510, 145}, {125, 330}};
 
-    // Initialize UI.
-    ImageSprite logo_sprite{Logo1_png, {0.1f, 0.1f}};
-    TextSprite logo_text{comfortaa_font, "Hexaswiiper"};
-    logo_sprite.SetPosition({5, 2});
-    logo_text.SetPosition({logo_sprite.GetBounds().GetRight() + 8, 13});
+    this->AddSprite(std::make_unique<RoundedRectangleSprite>(
+        game_region.GetTopLeft(),
+        game_region.GetSize(),
+        ACTUAL_BLACK,
+        5,
+        false
+    ));
+    this->AddSprite(std::make_unique<RoundedRectangleSprite>(
+        settings_region.GetTopLeft(),
+        settings_region.GetSize(),
+        ACTUAL_BLACK,
+        5,
+        false
+    ));
+    this->AddSprite(std::make_unique<RoundedRectangleSprite>(
+        info_region.GetTopLeft(),
+        info_region.GetSize(),
+        ACTUAL_BLACK,
+        5,
+        false
+    ));
 
-    // Initialize tilemap & game.
-    std::unique_ptr<Hexasweeper::Game> hexasweeper_game = CreateGame(comfortaa_font, game_region);
-    Hexasweeper::Graphics::Tilemap* tilemap = &hexasweeper_game->GetTilemap();
+    // Initialize UI.
+    std::unique_ptr<ImageSprite> logo_sprite = std::make_unique<ImageSprite>(Logo1_png, Vector2{0.1f, 0.1f});
+    std::unique_ptr<TextSprite> logo_text = std::make_unique<TextSprite>(comfortaa_font, "Hexaswiiper");
+    logo_sprite->SetPosition({5, 2});
+    logo_text->SetPosition({logo_sprite->GetBounds().GetRight() + 8, 13});
+
+    this->AddSprite(std::move(logo_sprite));
+    this->AddSprite(std::move(logo_text));
+
+    // Initialize game.
+    m_hexasweeper_game = CreateGame(comfortaa_font, game_region);
 
     // Initialize info sprites.
-    TextSprite settings_text{roboto_font, "Difficulty: Whatever"};
-    settings_text.SetPosition(settings_region.GetTopLeft() + Vector2{2, 10});
-    settings_text.SetTextSize(14);
+    std::unique_ptr<TextSprite> settings_text = std::make_unique<TextSprite>(roboto_font, "Difficulty: Whatever");
+    settings_text->SetPosition(settings_region.GetTopLeft() + Vector2{2, 10});
+    settings_text->SetTextSize(14);
 
-    TextSprite flags_left_text{roboto_font, ""};
-    flags_left_text.SetPosition(info_region.GetTopLeft() + Vector2{2, 10});
-    flags_left_text.SetTextSize(15);
+    std::unique_ptr<TextSprite> flags_left_text = std::make_unique<TextSprite>(roboto_font, "");
+    flags_left_text->SetPosition(info_region.GetTopLeft() + Vector2{2, 10});
+    flags_left_text->SetTextSize(15);
+    m_flags_left_text = flags_left_text.get();
 
-    TextSprite time_text{roboto_font, ""};
-    time_text.SetPosition(info_region.GetTopLeft() + Vector2{2, 30});
-    time_text.SetTextSize(15);
+    std::unique_ptr<TextSprite> time_text = std::make_unique<TextSprite>(roboto_font, "");
+    time_text->SetPosition(info_region.GetTopLeft() + Vector2{2, 30});
+    time_text->SetTextSize(15);
+    m_time_text = time_text.get();
+
+    this->AddSprite(std::move(settings_text));
+    this->AddSprite(std::move(flags_left_text));
+    this->AddSprite(std::move(time_text));
 
     // Interactive UI.
 
-    HoverButton restart_button = CreateRoundedRectangleTextButton([&hexasweeper_game, &tilemap, &game_region, comfortaa_font](){
-            hexasweeper_game = CreateGame(comfortaa_font, game_region);
-            tilemap = &hexasweeper_game->GetTilemap();
+    this->AddButton(CreateRoundedRectangleTextButton([this, game_region, comfortaa_font](){
+            this->m_hexasweeper_game = CreateGame(comfortaa_font, game_region);
         },
         {info_region.GetBottomLeft() + Vector2{12.5f, -45}, {100.0, 30.0}},
         5,
         roboto_font,
         "Restart",
         20
-    );
+    ));
 
-    HoverButton center_button = CreateRoundedRectangleTextButton([&tilemap, &game_region](){
-            tilemap->SetTopLeft(game_region.GetTopLeft());
+    this->AddButton(CreateRoundedRectangleTextButton([this, game_region](){
+            this->m_hexasweeper_game->GetTilemap().SetTopLeft(game_region.GetTopLeft());
         },
         {info_region.GetBottomLeft() + Vector2{12.5f, -85}, {100.0, 30.0}},
         5,
         roboto_font,
         "Center Camera",
         13
-    );
+    ));
+}
 
-    std::vector<IButton*> active_buttons{&restart_button, &center_button};
+void GameScene::UpdateScene()
+{
+    u32 pressedButtons = this->GetCursor()->GetPressedButtons();
+    u32 heldButtons = this->GetCursor()->GetHeldButtons();
 
-    // Loop forever (gameloop).
-    while(true)
+    // If [HOME] was pressed on the first Wiimote, break out of the loop
+    if (pressedButtons & WPAD_BUTTON_HOME)
     {
-        // Scan the Wiimotes (including IR).
-        WPAD_ScanPads();
-
-        u32 pressedButtons = WPAD_ButtonsDown(WPAD_CHAN_0);
-        u32 heldButtons = WPAD_ButtonsHeld(WPAD_CHAN_0);
-
-        // If [HOME] was pressed on the first Wiimote, break out of the loop
-        if (pressedButtons & WPAD_BUTTON_HOME)
-        {
-            break;
-        }
-
-        if (tilemap->GetClipRect().has_value() && tilemap->GetClipRect()->ContainsPoint(wiimoteCursor.GetPosition()))
-        {
-            if (pressedButtons & WPAD_BUTTON_A)
-            {
-                hexasweeper_game->RevealTile(wiimoteCursor.GetPosition());
-            }
-            else if (pressedButtons & WPAD_BUTTON_B)
-            {
-                hexasweeper_game->FlagTile(wiimoteCursor.GetPosition());
-            }
-        }
-
-        Vector2 movement{0, 0};
-        if (heldButtons & WPAD_BUTTON_UP) movement.y += 1.0;
-        if (heldButtons & WPAD_BUTTON_DOWN) movement.y -= 1.0;
-        if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1.0;
-        if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1.0;
-
-        hexasweeper_game->GetTilemap().Move(movement * 5);
-        
-        // Draw game.
-        hexasweeper_game->GetTilemap().Render();
-
-        // Draw UI
-        logo_sprite.Render();
-        logo_text.Render();
-
-        // Draw information. (Part of UI)
-        settings_text.Render();
-
-        Hexasweeper::Logic::Board& board = hexasweeper_game->GetBoard();
-        std::string flags_left_string{};
-        flags_left_string += std::format("Flags Left: {}/{}", board.GetFlagsLeft(), board.GetNumBombs());
-        flags_left_text.SetText(flags_left_string);
-        flags_left_text.Render();
-
-        std::string time_passed_string{};
-        if (hexasweeper_game->GetStartTime() == 0)
-        {
-            time_passed_string += std::string{"Not started yet"};
-        }
-        else
-        {
-            time_passed_string += std::string{"Time: "} + FormatDuration(time(nullptr) - hexasweeper_game->GetStartTime());
-        }
-        time_text.SetText(time_passed_string);
-        time_text.Render();
-
-        // Draw UI regions.
-        Draw_RoundedRectangle(game_region, 5, ACTUAL_BLACK, false);
-        Draw_RoundedRectangle(settings_region, 5, ACTUAL_BLACK, false);
-        Draw_RoundedRectangle(info_region, 5, ACTUAL_BLACK, false);
-
-        // TODO: React to mouse is nice for effects later on but it's not versatile.
-        for (auto button : active_buttons)
-        {
-            button->Render();
-            button->ReactToMouse(
-                wiimoteCursor.GetPosition(),
-                pressedButtons & WPAD_BUTTON_A
-            );
-        }
-
-        restart_button.Render();
-
-        // WiiMote cursor should be rendered last so that it would not be covered by other objects.
-        wiimoteCursor.Render();
-
-        VIDEO_WaitVSync();
-        GRRLIB_Render();
+        CRASH(0);
     }
+
+    if (m_hexasweeper_game->GetTilemap().GetClipRect().has_value() && m_hexasweeper_game->GetTilemap().GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition()))
+    {
+        if (pressedButtons & WPAD_BUTTON_A)
+        {
+            m_hexasweeper_game->RevealTile(this->GetCursor()->GetPosition());
+        }
+        else if (pressedButtons & WPAD_BUTTON_B)
+        {
+            m_hexasweeper_game->FlagTile(this->GetCursor()->GetPosition());
+        }
+    }
+
+    Vector2 movement{0, 0};
+    if (heldButtons & WPAD_BUTTON_UP) movement.y += 1.0;
+    if (heldButtons & WPAD_BUTTON_DOWN) movement.y -= 1.0;
+    if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1.0;
+    if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1.0;
+
+    m_hexasweeper_game->GetTilemap().Move(movement * 5);
+
+    // Draw game.
+    m_hexasweeper_game->GetTilemap().Render();
+
+    Hexasweeper::Logic::Board& board = m_hexasweeper_game->GetBoard();
+    std::string flags_left_string{};
+    flags_left_string += std::format("Flags Left: {}/{}", board.GetFlagsLeft(), board.GetNumBombs());
+    m_flags_left_text->SetText(flags_left_string);
+
+    std::string time_passed_string{};
+    if (m_hexasweeper_game->GetStartTime() == 0)
+    {
+        time_passed_string += std::string{"Not started yet"};
+    }
+    else
+    {
+        time_passed_string += std::string{"Time: "} + FormatDuration(time(nullptr) - m_hexasweeper_game->GetStartTime());
+    }
+    m_time_text->SetText(time_passed_string);
 }

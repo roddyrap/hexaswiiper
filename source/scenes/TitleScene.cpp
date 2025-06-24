@@ -15,61 +15,33 @@
 
 #include "Logo1_png.h"
 
-void TitleScene::show_title()
+void TitleScene::InitializeScene()
 {
-    // play_game();
+    std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, this->GetFTLibrary());
 
-    GRRLIB_SetBackgroundColour(87, 87, 87, 255);
+    this->SetCursor(std::make_unique<WiimoteCursor>(WPAD_CHAN_0));
 
-    std::shared_ptr<FT_LibraryRec_> ft_library = Graphics::create_ft_library();
-    std::shared_ptr<Graphics::Font> comfortaa_font = std::make_shared<Graphics::Font>(Comfortaa_Regular_ttf, Comfortaa_Regular_ttf_size, ft_library);
-    std::shared_ptr<Graphics::Font> robot_font = std::make_shared<Graphics::Font>(Roboto_Regular_ttf, Roboto_Regular_ttf_size, ft_library);
+    std::unique_ptr<Graphics::ImageSprite> logo_sprite = std::make_unique<Graphics::ImageSprite>(Logo1_png, Vector2{0.25f, 0.25f});
+    logo_sprite->SetPosition({50, 50});
 
-    WiimoteCursor wiimoteCursor{WPAD_CHAN_0};
+    std::unique_ptr<Graphics::TextSprite> logo_text = std::make_unique<Graphics::TextSprite>(Vector2{}, comfortaa_font, "Hexaswiiper", 65, UINT32_MAX);
+    Vector2 centered_position{logo_sprite->GetBounds().GetRight() + 10, logo_sprite->GetBounds().GetTop() + logo_sprite->GetBounds().GetSize().y / 2 - logo_text->GetBounds().GetSize().y / 2};
+    logo_text->SetPosition(centered_position);
 
-    Graphics::ImageSprite logo_sprite{Logo1_png, {0.25f, 0.25f}};
-    logo_sprite.SetPosition({50, 50});
+    this->AddSprite(std::move(logo_text));
+    this->AddSprite(std::move(logo_sprite));
 
-    Graphics::TextSprite logo_text{Vector2{}, comfortaa_font, "Hexaswiiper", 65, UINT32_MAX};
-    Vector2 centered_position{logo_sprite.GetBounds().GetRight() + 10, logo_sprite.GetBounds().GetTop() + logo_sprite.GetBounds().GetSize().y / 2 - logo_text.GetBounds().GetSize().y / 2};
-    logo_text.SetPosition(centered_position);
-
-    Graphics::HoverButton play_button = Graphics::CreateHexagonTextButton(
-        [](){ play_game(); },
+    this->AddButton(Graphics::CreateHexagonTextButton(
+        [](){
+            GameScene game{};
+            game.SceneLoop();
+        },
         Vector2{275, 300},
         50,
         comfortaa_font,
         "Play!",
         30
-    );
-
-    std::vector<Graphics::IButton*> active_buttons{&play_button};
-
-    while (true)
-    {
-        // Scan the Wiimotes (including IR).
-        WPAD_ScanPads();
-
-        uint32_t pressedButtons = WPAD_ButtonsDown(WPAD_CHAN_0);
-        // uint32_t heldButtons = WPAD_ButtonsHeld(WPAD_CHAN_0);
-
-        logo_sprite.Render();
-        logo_text.Render();
-
-        for (auto button : active_buttons)
-        {
-            button->Render();
-            button->ReactToMouse(
-                wiimoteCursor.GetPosition(),
-                pressedButtons & WPAD_BUTTON_A
-            );
-        }
-
-        play_button.Render();
-
-        wiimoteCursor.Render();
-
-        VIDEO_WaitVSync();
-        GRRLIB_Render();
-    }
+    ));
 }
+
+void TitleScene::UpdateScene() {}

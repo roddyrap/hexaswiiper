@@ -26,7 +26,8 @@ int main(int argc, char **argv)
 {
     init_wii();
 
-    TitleScene::show_title();
+    TitleScene title_scene{};
+    title_scene.SceneLoop();
 
     // Clear the memory allocated by GRRLIB
     GRRLIB_Exit(); 

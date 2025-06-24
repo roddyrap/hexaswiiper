@@ -11,9 +11,12 @@ public:
     virtual Vector2 GetPosition() const override;
 
     virtual void Render() override;
+
+    u32 GetPressedButtons() const;
+    u32 GetHeldButtons() const;
+
 private:
     static const uint8_t* GetImageByChannel(int channel);
-    static u32 GetPlayerColor(int player_index);
 
     static constexpr uint32_t SPRITE_COLOR = 0xFFFFFFFF;
 

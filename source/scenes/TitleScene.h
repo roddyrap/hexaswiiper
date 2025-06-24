@@ -1,9 +1,12 @@
 #ifndef SCENES_TITLE_SCENE_H
 #define SCENES_TITLE_SCENE_H
 
-namespace TitleScene
+#include "scenes/BaseScene.h"
+class TitleScene : public BaseScene
 {
-    void show_title();
-}
+public:
+    void InitializeScene();
+    void UpdateScene();
+};
 
 #endif // SCENES_TITLE_SCENE_H

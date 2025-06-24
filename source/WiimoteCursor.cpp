@@ -52,3 +52,13 @@ void WiimoteCursor::Render()
     Vector2 scale = GetScale();
     GRRLIB_DrawImg(position.x, position.y, this->GetTexture(), orientation.roll, scale.x, scale.y, m_color);
 }
+
+u32 WiimoteCursor::GetPressedButtons() const
+{
+    return  WPAD_ButtonsDown(m_wiimoteIndex);
+}
+
+u32 WiimoteCursor::GetHeldButtons() const
+{
+    return WPAD_ButtonsHeld(m_wiimoteIndex);
+}
