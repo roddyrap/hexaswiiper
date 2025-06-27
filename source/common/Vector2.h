@@ -1,6 +1,7 @@
 #ifndef COMMON_VECTOR2_H
 #define COMMON_VECTOR2_H
 
+#include <stdint.h>
 #include <type_traits>
 
 // For std::hash
@@ -99,5 +100,6 @@ struct std::hash<Vector2Base<NumberType>>
 
 using Vector2 = Vector2Base<float>;
 using Vector2Int = Vector2Base<int>;
+using Vector2U32 = Vector2Base<uint32_t>;
 
 #endif // COMMON_VECTOR2_H

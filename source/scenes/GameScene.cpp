@@ -12,6 +12,7 @@
 #include "sprites/RectSprite.h"
 #include "WiimoteCursor.h"
 #include "graphics/sprites/TextSprite.h"
+#include "graphics/sprites/AutofitTextSprite.h"
 #include "graphics/text/Font.h"
 #include "graphics/ui/HoverButton.h"
 #include "graphics/ui/ButtonFactory.h"
@@ -113,18 +114,29 @@ void GameScene::InitializeScene()
 
     // Initialize info sprites.
     std::string difficulty_string = std::format("Difficulty: {}", m_difficulty.name);
-    std::unique_ptr<TextSprite> settings_text = std::make_unique<TextSprite>(roboto_font, difficulty_string);
-    settings_text->SetPosition(settings_region.GetTopLeft() + Vector2{2, 10});
-    settings_text->SetTextSize(14);
+    std::unique_ptr<AutofitTextSprite> settings_text = std::make_unique<AutofitTextSprite>(
+        RectangleBounds{settings_region.GetTopLeft() + Vector2{2, 10}, Vector2{settings_region.GetSize().x - 4, 20}},
+        comfortaa_font,
+        difficulty_string,
+        UINT32_MAX
+    );
 
-    std::unique_ptr<TextSprite> flags_left_text = std::make_unique<TextSprite>(roboto_font, "");
-    flags_left_text->SetPosition(info_region.GetTopLeft() + Vector2{2, 10});
-    flags_left_text->SetTextSize(15);
+    std::unique_ptr<AutofitTextSprite> flags_left_text = std::make_unique<AutofitTextSprite>(
+        RectangleBounds{info_region.GetTopLeft() + Vector2{2, 10}, Vector2{info_region.GetSize().x - 4, 20}},
+        roboto_font,
+        "",
+        UINT32_MAX,
+        Vector2U32{1, 15}
+    );
     m_flags_left_text = flags_left_text.get();
 
-    std::unique_ptr<TextSprite> time_text = std::make_unique<TextSprite>(roboto_font, "");
-    time_text->SetPosition(info_region.GetTopLeft() + Vector2{2, 30});
-    time_text->SetTextSize(15);
+    std::unique_ptr<AutofitTextSprite> time_text = std::make_unique<AutofitTextSprite>(
+        RectangleBounds{info_region.GetTopLeft() + Vector2{2, 30}, Vector2{info_region.GetSize().x - 4, 20}},
+        roboto_font,
+        "",
+        UINT32_MAX,
+        Vector2U32{1, 15}
+    );
     m_time_text = time_text.get();
 
     this->AddSprite(std::move(settings_text));

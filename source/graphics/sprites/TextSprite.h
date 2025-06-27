@@ -25,9 +25,11 @@ namespace Graphics
 
         virtual void Render() override;
         virtual RectangleBounds GetBounds() const override;
+        virtual std::shared_ptr<Font> GetFont() const;
+        virtual const std::string& GetText() const;
 
-        void SetText(const std::string& text);
-        void SetTextSize(u32 text_size);
+        virtual void SetText(const std::string& text);
+        virtual void SetTextSize(u32 text_size);
 
     private:
         void RasterizeText();

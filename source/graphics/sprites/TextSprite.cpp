@@ -49,6 +49,16 @@ namespace Graphics
         return RectangleBounds{this->GetPosition(), size};
     }
 
+    std::shared_ptr<Font> TextSprite::GetFont() const
+    {
+        return m_font;
+    }
+
+    const std::string& TextSprite::GetText() const
+    {
+        return m_text;
+    }
+
     void TextSprite::RasterizeText()
     {
         // TODO: Support multiple lines by having multiple textures (One for each line) and by
