@@ -5,16 +5,74 @@
 
 namespace Graphics
 {
+    enum class Alignment
+    {
+        START,
+        CENTER,
+        END
+    };
+
     class AutofitTextSprite : public TextSprite
     {
     public:
-        AutofitTextSprite(RectangleBounds bounds, std::shared_ptr<Font> font, const std::string text, uint32_t color, Vector2U32 size_range) :
-            TextSprite{bounds.GetTopLeft(), font, text, 1, color}, m_size{bounds.GetSize()}, m_size_range{size_range}
+        AutofitTextSprite(RectangleBounds bounds, std::shared_ptr<Font> font, const std::string text, uint32_t color, Vector2U32 size_range, Alignment x_align, Alignment y_align) :
+            TextSprite{bounds.GetTopLeft(), font, text, 1, color}, m_size{bounds.GetSize()}, m_size_range{size_range}, m_x_align{x_align}, m_y_align{y_align}
         {
             this->AutofitTextSize();
         }
+        AutofitTextSprite(RectangleBounds bounds, std::shared_ptr<Font> font, const std::string text, uint32_t color, Vector2U32 size_range) :
+            AutofitTextSprite{bounds, font, text, color, size_range, Alignment::START, Alignment::START} {}
         AutofitTextSprite(RectangleBounds bounds, std::shared_ptr<Font> font, const std::string text, uint32_t color) :
             AutofitTextSprite{bounds, font, text, color, Vector2U32{0, UINT32_MAX}} {}
+
+        void SetText(const std::string& text) override
+        {
+            this->TextSprite::SetText(text);
+            this->AutofitTextSize();
+        }
+
+        void SetSize(Vector2 new_size)
+        {
+            m_size = new_size;
+            this->AutofitTextSize();
+        }
+
+        RectangleBounds GetBounds() const override
+        {
+            return RectangleBounds{this->GetPosition(), m_size};
+        }
+
+        void Render() override
+        {
+            // Will only happen if text size is zero, but that's the relevant variable to check.
+            if (m_cached_texture == nullptr) return;
+
+            Vector2 topleft = GetPosition();
+            Vector2 position{topleft};
+            if (m_x_align == Alignment::START);
+            else if (m_x_align == Alignment::CENTER)
+            {
+                position.x = topleft.x + m_size.x / 2 - m_cached_texture->w / 2;
+            }
+            else if (m_x_align == Alignment::END)
+            {
+                position.x = topleft.x + m_size.x - m_cached_texture->w;
+            }
+
+            if (m_y_align == Alignment::START);
+            else if (m_y_align == Alignment::CENTER)
+            {
+                position.y = topleft.y + m_size.y / 2 - m_cached_texture->h / 2;
+            }
+            else if (m_y_align == Alignment::END)
+            {
+                position.y = topleft.y + m_size.y - m_cached_texture->w;
+            }
+
+            // Get from function to allow overloading position.
+
+            GRRLIB_DrawImg(position.x, position.y, m_cached_texture, 0, 1, 1, m_color);
+        }
 
     private:
         uint32_t GuessTextSize()
@@ -51,21 +109,12 @@ namespace Graphics
             this->SetTextSize(text_size);
         }
 
-        void SetText(const std::string& text) override
-        {
-            this->TextSprite::SetText(text);
-            this->AutofitTextSize();
-        }
-
-        void SetSize(Vector2 new_size)
-        {
-            m_size = new_size;
-            this->AutofitTextSize();
-        }
-
     private:
         Vector2 m_size;
         Vector2U32 m_size_range{};
+
+        Alignment m_x_align;
+        Alignment m_y_align;
     };
 }
 

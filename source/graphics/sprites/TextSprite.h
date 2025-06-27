@@ -34,11 +34,12 @@ namespace Graphics
     private:
         void RasterizeText();
 
+    protected:
+        GRRLIB_texImg *m_cached_texture = nullptr;
+
     private:
         std::shared_ptr<Graphics::Font> m_font;
         std::string m_text;
-
-        GRRLIB_texImg *m_cached_texture = nullptr;
 
         u32 m_text_size;
     };

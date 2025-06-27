@@ -118,7 +118,10 @@ void GameScene::InitializeScene()
         RectangleBounds{settings_region.GetTopLeft() + Vector2{2, 10}, Vector2{settings_region.GetSize().x - 4, 20}},
         comfortaa_font,
         difficulty_string,
-        UINT32_MAX
+        UINT32_MAX,
+        Vector2U32{1, 15},
+        Alignment::START,
+        Alignment::CENTER
     );
 
     std::unique_ptr<AutofitTextSprite> flags_left_text = std::make_unique<AutofitTextSprite>(
@@ -126,7 +129,9 @@ void GameScene::InitializeScene()
         roboto_font,
         "",
         UINT32_MAX,
-        Vector2U32{1, 15}
+        Vector2U32{1, 15},
+        Alignment::START,
+        Alignment::CENTER
     );
     m_flags_left_text = flags_left_text.get();
 
@@ -135,7 +140,9 @@ void GameScene::InitializeScene()
         roboto_font,
         "",
         UINT32_MAX,
-        Vector2U32{1, 15}
+        Vector2U32{1, 15},
+        Alignment::START,
+        Alignment::CENTER
     );
     m_time_text = time_text.get();
 

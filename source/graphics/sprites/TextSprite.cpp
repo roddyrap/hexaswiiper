@@ -32,10 +32,7 @@ namespace Graphics
         RectSprite{position, this->GetBounds().GetSize(), RGBA(255, 0, 0, 128), true}.Render();
 #endif // DEBUG_RENDER_TEXT_BOUNDING_BOX
 
-        if (m_cached_texture != nullptr)
-        {
-            GRRLIB_DrawImg(position.x, position.y, m_cached_texture, 0, 1, 1, m_color);
-        }
+        GRRLIB_DrawImg(position.x, position.y, m_cached_texture, 0, 1, 1, m_color);
     }
 
     RectangleBounds TextSprite::GetBounds() const
