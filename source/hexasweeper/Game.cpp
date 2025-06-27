@@ -202,3 +202,8 @@ std::optional<RectangleBounds> Hexasweeper::Game::GetClipRect() const
 {
     return m_clip_rect;
 }
+
+std::optional<bool> Hexasweeper::Game::IsGameOver() const
+{
+    return m_board.IsGameOver();
+}

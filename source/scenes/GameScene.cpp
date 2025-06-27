@@ -184,7 +184,7 @@ void GameScene::UpdateScene()
         CRASH(0);
     }
 
-    if (m_hexasweeper_game->GetClipRect().has_value() && m_hexasweeper_game->GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition()))
+    if (!m_game_over.has_value() && (m_hexasweeper_game->GetClipRect().has_value() && m_hexasweeper_game->GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition())))
     {
         if (pressedButtons & WPAD_BUTTON_A)
         {
@@ -194,6 +194,8 @@ void GameScene::UpdateScene()
         {
             m_hexasweeper_game->FlagTile(this->GetCursor()->GetPosition());
         }
+
+        m_game_over = m_hexasweeper_game->IsGameOver();
     }
 
     Vector2 movement{0, 0};
@@ -207,18 +209,28 @@ void GameScene::UpdateScene()
     // Draw game.
     m_hexasweeper_game->Render();
 
-    std::string flags_left_string{};
-    flags_left_string += std::format("Flags Left: {}/{}", m_hexasweeper_game->GetFlagsLeft(), m_hexasweeper_game->GetNumBombs());
-    m_flags_left_text->SetText(flags_left_string);
-
     std::string time_passed_string{};
-    if (m_hexasweeper_game->GetStartTime() == 0)
+    if (!m_game_over.has_value())
     {
-        time_passed_string += std::string{"Not started yet"};
+        std::string flags_left_string{};
+        flags_left_string += std::format("Flags Left: {}/{}", m_hexasweeper_game->GetFlagsLeft(), m_hexasweeper_game->GetNumBombs());
+        m_flags_left_text->SetText(flags_left_string);
+
+        // Only update time if game isn't over.
+        if (m_hexasweeper_game->GetStartTime() == 0)
+        {
+            time_passed_string += std::string{"Not started yet"};
+        }
+        else
+        {
+            time_passed_string += std::string{"Time: "} + FormatDuration(time(nullptr) - m_hexasweeper_game->GetStartTime());
+        }
+        m_time_text->SetText(time_passed_string);
     }
     else
     {
-        time_passed_string += std::string{"Time: "} + FormatDuration(time(nullptr) - m_hexasweeper_game->GetStartTime());
+        std::string result_string = *m_game_over ? "Success!" : "Failure!";
+        m_flags_left_text->SetText(result_string);
     }
-    m_time_text->SetText(time_passed_string);
+
 }

@@ -31,7 +31,7 @@ namespace Hexasweeper::Logic
 
         bool IsCoordinateInBoard(Vector2Int coordinates);
 
-        std::optional<bool> IsGameOver();
+        std::optional<bool> IsGameOver() const;
 
         const TileState& GetTileState(Vector2Int coordinates) const;
         const u8 NearbyFlags(Vector2Int coordinates);

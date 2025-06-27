@@ -72,7 +72,7 @@ bool Hexasweeper::Logic::Board::IsCoordinateInBoard(Vector2Int coordinates)
     return m_tiles.contains(coordinates);
 }
 
-std::optional<bool> Hexasweeper::Logic::Board::IsGameOver()
+std::optional<bool> Hexasweeper::Logic::Board::IsGameOver() const
 {
     if (m_clicked_on_bomb) return false;
     if (m_unflagged_bombs == 0) return true;

@@ -38,6 +38,8 @@ namespace Hexasweeper
         void SetClipRect(std::optional<RectangleBounds> clip_rect);
         std::optional<RectangleBounds> GetClipRect() const;
 
+        std::optional<bool> IsGameOver() const;
+
     private:
         TileRenderer m_tile_renderer;
         Logic::Board m_board;

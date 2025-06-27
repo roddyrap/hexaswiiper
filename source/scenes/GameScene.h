@@ -24,6 +24,8 @@ private:
 
     Graphics::TextSprite *m_time_text;
     Graphics::TextSprite *m_flags_left_text;
+
+    std::optional<bool> m_game_over{std::nullopt};
 };
 
 #endif // SCENES_GAME_SCENE_H
