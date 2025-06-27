@@ -16,7 +16,7 @@ public:
     void UpdateScene();
 
 private:
-    void InitializeGame(std::shared_ptr<Graphics::Font> title_font, const RectangleBounds& game_region);
+    void InitializeGame(std::shared_ptr<Graphics::Font> title_font, const Graphics::RectangleBounds& game_region);
 
 private:
     Hexasweeper::Difficulty m_difficulty;

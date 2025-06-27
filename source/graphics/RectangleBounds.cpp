@@ -97,4 +97,25 @@ namespace Graphics
         this->UpdateToFit(bounds.GetBottomLeft());
         this->UpdateToFit(bounds.GetBottomRight());
     }
+
+    RectangleBounds RectangleBounds::Intersection(const RectangleBounds& other) const
+    {
+        Vector2 intersection_topleft{
+            std::max(this->GetLeft(), other.GetLeft()),
+            std::max(this->GetTop(), other.GetTop()),
+        };
+
+        Vector2 intersection_bottomright{
+            std::min(this->GetRight(), other.GetRight()),
+            std::min(this->GetBottom(), other.GetBottom()),
+        };
+
+        Vector2 rect_size = intersection_bottomright - intersection_topleft;
+        if (rect_size.x < 0 || rect_size.y < 0)
+        {
+            return RectangleBounds{};
+        }
+
+        return RectangleBounds{intersection_topleft, rect_size};
+    }
 }

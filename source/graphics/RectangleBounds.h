@@ -31,7 +31,9 @@ namespace Graphics
 
         void UpdateToFit(Vector2 point);
         void UpdateToFit(RectangleBounds bounds);
-    private:
+        RectangleBounds Intersection(const RectangleBounds& other) const;
+
+        private:
         Vector2 m_topLeft;
         Vector2 m_size;
     };

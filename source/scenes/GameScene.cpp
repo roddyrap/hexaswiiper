@@ -53,13 +53,13 @@ void GameScene::InitializeGame(std::shared_ptr<Font> title_font, const Rectangle
         m_difficulty.num_bombs
     );
 
-    m_hexasweeper_game->GetTilemap().SetTopLeft(game_region.GetTopLeft());
+    m_hexasweeper_game->SetTopLeft(game_region.GetTopLeft());
 
     // TODO: The clipping isn't perfect, the region border is a rounded rectangle which means that
     //       the corners are incorrect (Not clipped). This is known. My idea for solving it is by
     //       rendering the inverse of the rounded rectangle after the tilemap, which would cover
     //       the edges. Will also need to treat remote presses on the edges.
-    m_hexasweeper_game->GetTilemap().SetClipRect(game_region);
+    m_hexasweeper_game->SetClipRect(game_region);
 }
 
 GameScene::GameScene(Hexasweeper::Difficulty difficulty) : m_difficulty{difficulty} {}
@@ -144,7 +144,7 @@ void GameScene::InitializeScene()
     ));
 
     this->AddButton(CreateRoundedRectangleTextButton([this, game_region](){
-            this->m_hexasweeper_game->GetTilemap().SetTopLeft(game_region.GetTopLeft());
+            this->m_hexasweeper_game->SetTopLeft(game_region.GetTopLeft());
         },
         {info_region.GetBottomLeft() + Vector2{12.5f, -85}, {100.0, 30.0}},
         5,
@@ -165,7 +165,7 @@ void GameScene::UpdateScene()
         CRASH(0);
     }
 
-    if (m_hexasweeper_game->GetTilemap().GetClipRect().has_value() && m_hexasweeper_game->GetTilemap().GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition()))
+    if (m_hexasweeper_game->GetClipRect().has_value() && m_hexasweeper_game->GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition()))
     {
         if (pressedButtons & WPAD_BUTTON_A)
         {
@@ -183,14 +183,13 @@ void GameScene::UpdateScene()
     if (heldButtons & WPAD_BUTTON_LEFT) movement.x += 1.0;
     if (heldButtons & WPAD_BUTTON_RIGHT) movement.x -= 1.0;
 
-    m_hexasweeper_game->GetTilemap().Move(movement * 5);
+    m_hexasweeper_game->Move(movement * 5);
 
     // Draw game.
-    m_hexasweeper_game->GetTilemap().Render();
+    m_hexasweeper_game->Render();
 
-    Hexasweeper::Logic::Board& board = m_hexasweeper_game->GetBoard();
     std::string flags_left_string{};
-    flags_left_string += std::format("Flags Left: {}/{}", board.GetFlagsLeft(), board.GetNumBombs());
+    flags_left_string += std::format("Flags Left: {}/{}", m_hexasweeper_game->GetFlagsLeft(), m_hexasweeper_game->GetNumBombs());
     m_flags_left_text->SetText(flags_left_string);
 
     std::string time_passed_string{};
