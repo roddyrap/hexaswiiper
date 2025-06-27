@@ -59,4 +59,9 @@ namespace Graphics
     {
         m_size = size;
     }
+
+    bool RectSprite::IsPositionHovering(Vector2 position) const
+    {
+        return this->GetBounds().ContainsPoint(position);
+    }
 }

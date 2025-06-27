@@ -18,7 +18,7 @@ namespace Graphics
     public:
         virtual ~IButton() = default;
 
-        virtual void ReactToMouse(Vector2 mouse_position, bool is_pressed) = 0;
+        virtual void ReactToCursor(Vector2 cursor_position, bool is_pressed) = 0;
 
         virtual void Call()
         {

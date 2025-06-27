@@ -25,7 +25,7 @@ void BaseScene::SceneLoop()
             button->Render();
             if (m_cursor != nullptr)
             {
-                button->ReactToMouse(
+                button->ReactToCursor(
                     m_cursor->GetPosition(),
                     m_cursor->GetPressedButtons() & WPAD_BUTTON_A
                 );

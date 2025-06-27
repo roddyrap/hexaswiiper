@@ -42,11 +42,11 @@ HoverButton::callback_t HoverButton::GetCallback() const
     return m_callback;
 }
 
-void HoverButton::ReactToMouse(Vector2 mouse_position, bool is_pressed)
+void HoverButton::ReactToCursor(Vector2 cursor_position, bool is_pressed)
 {
     uint64_t current_time = SYS_Time();
 
-    bool is_hovering = this->GetBounds().ContainsPoint(mouse_position);
+    bool is_hovering = m_sprite->IsPositionHovering(cursor_position);
     if (m_is_hovering != is_hovering)
     {
         m_hover_changed_time = current_time;

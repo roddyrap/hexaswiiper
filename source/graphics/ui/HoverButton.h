@@ -30,7 +30,7 @@ namespace Graphics
         void SetColor(uint32_t color) override;
         void SetCurrentColor(uint32_t color);
 
-        virtual void ReactToMouse(Vector2 mouse_position, bool is_pressed) override;
+        virtual void ReactToCursor(Vector2 cursor_position, bool is_pressed) override;
 
     private:
         callback_t m_callback;

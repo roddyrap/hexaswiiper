@@ -28,6 +28,8 @@ namespace Graphics
         virtual void SetSize(Vector2 size);
 
         virtual RectangleBounds GetBounds() const;
+        virtual bool IsPositionHovering(Vector2 position) const;
+
     protected:
         Vector2 m_position;
         Vector2 m_size;

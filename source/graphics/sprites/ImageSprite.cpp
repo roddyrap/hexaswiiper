@@ -9,7 +9,10 @@ namespace Graphics
     {}
 
     ImageSprite::ImageSprite(Vector2 position, const uint8_t* imageData, Vector2 scale, uint32_t color) :
-        RectSprite{position, Vector2{}, color, false}, m_scale{scale}
+        ImageSprite{Vector2{}, imageData, scale, color, 0} {}
+
+    ImageSprite::ImageSprite(Vector2 position, const uint8_t* imageData, Vector2 scale, uint32_t color, uint32_t rotation) :
+        RectSprite{position, Vector2{}, color, false}, m_scale{scale}, m_rotation{rotation}
     {
         m_texture = GRRLIB_LoadTexture(imageData);
         if (m_texture == nullptr)
@@ -38,7 +41,7 @@ namespace Graphics
 
         // Get from function to allow overloading position.
         Vector2 position = GetPosition();
-        GRRLIB_DrawImg(position.x, position.y, m_texture, 0, m_scale.x, m_scale.y, m_color);
+        GRRLIB_DrawImg(position.x, position.y, m_texture, m_rotation, m_scale.x, m_scale.y, m_color);
     }
 
     RectangleBounds ImageSprite::GetBounds() const
