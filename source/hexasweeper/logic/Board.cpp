@@ -42,6 +42,9 @@ std::vector<Vector2Int> Hexasweeper::Logic::Board::RevealTile(Vector2Int coordin
 
 bool Hexasweeper::Logic::Board::FlagTile(Vector2Int coordinates)
 {
+    // Disallow flagging tiles before the game has started.
+    if (!m_initialized_bombs) return false;
+
     TileState& tile_state = m_tiles[coordinates];
     if (tile_state.is_revealed) return false;
     if (tile_state.is_flagged)
