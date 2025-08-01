@@ -44,6 +44,8 @@ std::string FormatDuration(uint64_t duration_seconds)
 
 void GameScene::InitializeGame(std::shared_ptr<Font> title_font, const RectangleBounds& game_region)
 {
+    m_game_over = std::nullopt;
+
     m_hexasweeper_game = std::make_unique<Hexasweeper::Game>(
         title_font,
         Vector2{},
