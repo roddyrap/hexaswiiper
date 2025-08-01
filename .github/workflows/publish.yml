@@ -1,0 +1,58 @@
+name: Upload Hexasweeper Version From Tag
+
+on:
+  push:
+    tags:
+      - 'v?[0-9]+\.[0-9]+.*'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitppc:latest
+      options: --cpus 1
+
+    permissions:
+      contents: write
+
+    env:
+      VERSION_MATCH_REGEX: 'v?([0-9]+\.[0-9]+\.[0-9])'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # TODO: Get latest release tag, not the master branch.
+    - name: Clone GRRLIB
+      uses: actions/checkout@master
+      with:
+        repository: GRRLIB/GRRLIB
+        ref: master
+        path: grrlib/
+
+    - name: Build & Install GRRLIB
+      working-directory: grrlib/
+      run: |
+            make -C GRRLIB clean all install 
+    
+    - name: Build Hexasweeper
+      run: make build
+
+    # Create the GitHub release.
+    - name: Release on GitHub.
+      uses: softprops/action-gh-release@v2
+      with:
+        name: "Version ${{github.ref_name}}"
+        generate_release_notes: true
+        files: |
+            hexaswiiper.dol
+            hexaswiiper.elf
+        make_latest: true
