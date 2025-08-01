@@ -1,18 +1,14 @@
 #ifndef COMMON_CRASH_H
 #define COMMON_CRASH_H
 
-#define CRASH(exit_code) \
-    do                   \
-    {                    \
-        internal_crash(__FILE__, __LINE__, (exit_code)); \
-    } while (0)
+#include <source_location>
 
 #define ASSERT(expression)                   \
         do                                   \
         {                                    \
             if (!(expression))               \
             {                                \
-                CRASH(1);                    \
+                crash(1);                    \
             }                                \
         } while (false);
 
@@ -21,7 +17,7 @@
     {                                           \
         if ((condition) == (fail_value))        \
         {                                       \
-            CRASH(1);                           \
+            crash(1);                           \
         }                                       \
     } while (0)
 
@@ -30,13 +26,12 @@
     {                                       \
         if ((condition) != (fail_value))    \
         {                                   \
-            CRASH(1);                       \
+            crash(1);                       \
         }                                   \
     } while (0)
 
 #define ASSERT_NOT_NULL(condition) ASSERT_NOT_EQUAL((condition), nullptr)
 
-// TODO: Noreturn attribute
-void internal_crash(const char *file, int line, int exit_code);
+[[noreturn]] void crash(int exit_code, const std::source_location location = std::source_location::current());
 
 #endif // COMMON_CRASH_H

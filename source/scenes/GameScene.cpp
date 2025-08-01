@@ -181,7 +181,7 @@ void GameScene::UpdateScene()
     // If [HOME] was pressed on the first Wiimote, break out of the loop
     if (pressedButtons & WPAD_BUTTON_HOME)
     {
-        CRASH(0);
+        crash(0);
     }
 
     if (!m_game_over.has_value() && (m_hexasweeper_game->GetClipRect().has_value() && m_hexasweeper_game->GetClipRect()->ContainsPoint(this->GetCursor()->GetPosition())))

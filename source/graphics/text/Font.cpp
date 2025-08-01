@@ -29,7 +29,7 @@ constexpr int BIT6_MASK = 0b111111;
         if (__ft_error != 0)                                                              \
         {                                                                                 \
             SYS_Report("FT Error: %s (0x%x)\n", FT_Error_String(__ft_error), __ft_error); \
-            CRASH(1);                                                                     \
+            crash(1);                                                                     \
         }                                                                                 \
     } while (0)
 
@@ -222,7 +222,7 @@ owned_hb_buffer_t Graphics::Font::ShapeText(const std::string& text, text_size_t
 
     if (!hb_buffer_allocation_successful(hb_buffer.get()))
     {
-        CRASH(1);
+        crash(1);
     }
 
     hb_buffer_add_utf8(hb_buffer.get(), text.c_str(), text.size(), 0, -1);
