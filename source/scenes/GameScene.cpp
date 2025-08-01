@@ -20,8 +20,6 @@
 
 #include "sprites/ImageSprite.h"
 
-#include "Player1_png.h"
-#include "WiiLogo_png.h"
 #include "Logo1_png.h"
 
 #include "Roboto-Regular_ttf.h"
