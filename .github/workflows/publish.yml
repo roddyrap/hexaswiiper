@@ -46,6 +46,21 @@ jobs:
     - name: Build Hexasweeper
       run: make build
 
+    - name: OpenShopChannel creation dependencies
+      run:
+        apt install -y xmlstarlet
+
+    - name: Creating OpenShopChannel version
+      run: |
+          mkdir -p osc-tar/apps/hexaswiiper/
+
+          cp hexaswiiper.dol osc-tar/apps/hexaswiiper/boot.dol
+          cp data/Logo1.png osc-tar/apps/hexaswiiper/icon.png
+
+          xmlstarlet edit --update "/app/version" --value ${{github.ref_name}} --update "/app/release_date" --value $(date "+%F") osc-meta.xml.tmpl > osc-tar/apps/hexaswiiper/meta.xml
+
+          tar -f hexaswiiper-osc.tar -C osc-tar/ -c .
+
     # Create the GitHub release.
     - name: Release on GitHub.
       uses: softprops/action-gh-release@v2
@@ -55,4 +70,5 @@ jobs:
         files: |
             hexaswiiper.dol
             hexaswiiper.elf
+            hexaswiiper-osc.tar
         make_latest: true
